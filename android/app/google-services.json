@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "647493797055",
+    "project_id": "gas-calculator-59e0c",
+    "storage_bucket": "gas-calculator-59e0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647493797055:android:c3b26ffb0453b961d8320a",
+        "android_client_info": {
+          "package_name": "com.alefcsm.gascalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647493797055-d7qqf1v2f7a0f6bqp2scqu2rpljlshqr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alefcsm.gascalculator",
+            "certificate_hash": "28510606e41d44846b7c610bd820019ed0eb1085"
+          }
+        },
+        {
+          "client_id": "647493797055-cddqsd0dt3tm4av6od4hrt6tcchd89c7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7ehsagejAK_rSfLBbhJrYzg-9DnJoLjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647493797055-cddqsd0dt3tm4av6od4hrt6tcchd89c7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
