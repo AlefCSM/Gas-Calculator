@@ -23,7 +23,7 @@ class CustomTextFormField extends StatefulWidget {
   final FocusNode focusNode;
   final List<TextInputFormatter> inputFormatters;
   final Widget suffix;
-  final bool enabled;
+  final bool isEnabled;
   final Color disabledColor;
   final Color backgroundColor;
   final BoxConstraints suffixIconConstraints;
@@ -49,8 +49,8 @@ class CustomTextFormField extends StatefulWidget {
     this.focusNode,
     this.suffix,
     this.suffixIconConstraints,
-    this.enabled = true,
-    this.disabledColor = kWhiteColor,
+    this.isEnabled = true,
+    this.disabledColor = kLighterGrey,
     this.backgroundColor = kWhiteColor,
     this.uppercase = false,
     this.maxLength,
@@ -94,10 +94,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
       children: [
         SizedBox(
           child: Container(
-            height: 49.0,
+            height: 50.0,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: widget.enabled
+              color: widget.isEnabled
                   ? widget.backgroundColor
                   : widget.disabledColor,
               border: _isValid
@@ -127,7 +127,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
                 textCapitalization: widget.uppercase
                     ? TextCapitalization.characters
                     : TextCapitalization.none,
-                enabled: widget.enabled,
+                enabled: widget.isEnabled,
                 key: key,
                 maxLength: widget.maxLength,
                 controller: widget.controller,
@@ -251,7 +251,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
   }
 
   void _setFormatters() {
-    if (inputFormatters != widget.inputFormatters) {
       inputFormatters = widget.inputFormatters;
       inputFormatters ??= [];
 
@@ -262,6 +261,5 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
         inputFormatters
             .add(FilteringTextInputFormatter.allow(RegExp(r'[^A-Z]')));
       }
-    }
   }
 }

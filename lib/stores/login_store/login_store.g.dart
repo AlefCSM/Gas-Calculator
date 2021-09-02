@@ -31,6 +31,21 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
+  final _$loadingAtom = Atom(name: '_LoginStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
+    });
+  }
+
   final _$currentFormAtom = Atom(name: '_LoginStore.currentForm');
 
   @override
@@ -93,9 +108,21 @@ mixin _$LoginStore on _LoginStore, Store {
   }
 
   @override
+  dynamic setLoading(bool value) {
+    final _$actionInfo = _$_LoginStoreActionController.startAction(
+        name: '_LoginStore.setLoading');
+    try {
+      return super.setLoading(value);
+    } finally {
+      _$_LoginStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 currentUser: ${currentUser},
+loading: ${loading},
 currentForm: ${currentForm},
 hasUser: ${hasUser}
     ''';

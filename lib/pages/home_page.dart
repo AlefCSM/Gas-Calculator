@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
-import 'package:gas_calculator/stores/home/home_store.dart';
+import 'package:gas_calculator/stores/home_store/home_store.dart';
+import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
+import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
+import 'package:gas_calculator/tabs/home_tab.dart';
 import 'package:gas_calculator/tabs/profile_tab.dart';
 import 'package:get_it/get_it.dart';
 
@@ -16,12 +19,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   HomeStore homeStore = GetIt.I<HomeStore>();
+  VehicleStore vehicleStore = GetIt.I<VehicleStore>();
+  RefuelStore refuelStore = GetIt.I<RefuelStore>();
 
-  final tabs = [
-    Center(child: Text("Home")),
-    Center(child: Text("Charts")),
-    ProfileTab()
-  ];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  final tabs = [HomeTab(), Center(child: Text("Charts")), ProfileTab()];
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +37,13 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Observer(
         builder: (_) {
-          return tabs[homeStore.tab];
+          return tabs[homeStore.tabIndex];
         },
       ),
       bottomNavigationBar: Observer(
         builder: (_) {
           return BottomNavigationBar(
-            currentIndex: homeStore.tab,
+            currentIndex: homeStore.tabIndex,
             type: BottomNavigationBarType.fixed,
             selectedFontSize: CustomFontSize.large,
             unselectedFontSize: CustomFontSize.regular,
@@ -66,7 +72,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-
     super.dispose();
   }
 }

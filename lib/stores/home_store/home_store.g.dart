@@ -12,15 +12,15 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$tabAtom = Atom(name: '_HomeStore.tab');
 
   @override
-  int get tab {
+  int get tabIndex {
     _$tabAtom.reportRead();
-    return super.tab;
+    return super.tabIndex;
   }
 
   @override
-  set tab(int value) {
-    _$tabAtom.reportWrite(value, super.tab, () {
-      super.tab = value;
+  set tabIndex(int value) {
+    _$tabAtom.reportWrite(value, super.tabIndex, () {
+      super.tabIndex = value;
     });
   }
 
@@ -40,7 +40,7 @@ mixin _$HomeStore on _HomeStore, Store {
   @override
   String toString() {
     return '''
-tab: ${tab}
+tab: ${tabIndex}
     ''';
   }
 }

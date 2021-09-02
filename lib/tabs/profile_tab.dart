@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
-import 'package:gas_calculator/stores/login/login_store.dart';
+import 'package:gas_calculator/stores/home_store/home_store.dart';
+import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileTab extends StatelessWidget {
+  final HomeStore homeStore = GetIt.I<HomeStore>();
   final LoginStore loginStore = GetIt.I<LoginStore>();
 
   @override
@@ -17,6 +19,7 @@ class ProfileTab extends StatelessWidget {
         SubmitButton(
           text: "Sign out",
           onPressed: () {
+            homeStore.setTab(homeStore.homePageIndex);
             loginStore.signOut(context);
           },
         )

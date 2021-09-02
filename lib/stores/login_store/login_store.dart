@@ -18,6 +18,9 @@ abstract class _LoginStore with Store {
 
   @observable
   User currentUser;
+  
+  @observable
+  bool loading =false;
 
   @observable
   LoginForms currentForm = LoginForms.LOGIN;
@@ -38,13 +41,21 @@ abstract class _LoginStore with Store {
 
   @action
   setConfirmPassword(String value) => confirmPassword = value;
+  @action
+  setLoading(bool value) => loading = value;
 
   @computed
   get hasUser => currentUser != null;
+  
+  // @computed
+  // get initAtHome => loading &&hasUser
 
   void getUser() {
+
+    setLoading(true);
     FirebaseAuth.instance.authStateChanges().listen((user) {
       setCurrentUser(user);
+      setLoading(false);
     });
   }
 
@@ -57,7 +68,7 @@ abstract class _LoginStore with Store {
 
       user.updateDisplayName(profileName).then((value) {
         setCurrentUser(user);
-        pushToHomePage(context);
+        // pushToHomePage(context);
       });
 
 
@@ -78,7 +89,7 @@ abstract class _LoginStore with Store {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       setCurrentUser(userCredential.user);
-      pushToHomePage(context);
+      // pushToHomePage(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -91,7 +102,7 @@ abstract class _LoginStore with Store {
   }
 
   signInWithGoogle(BuildContext context) async {
-    if (hasUser) return pushToHomePage(context);
+    // if (hasUser) return pushToHomePage(context);
 
     try {
       final GoogleSignInAccount googleUser = await googleSignIn.signIn();
@@ -103,7 +114,7 @@ abstract class _LoginStore with Store {
           await FirebaseAuth.instance.signInWithCredential(authCredential);
 
       setCurrentUser(userCredential.user);
-      pushToHomePage(context);
+      // pushToHomePage(context);
     } catch (error) {
       print(error);
     }
@@ -117,19 +128,19 @@ abstract class _LoginStore with Store {
   signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     setCurrentForm(LoginForms.LOGIN);
-    pushToLogin(context);
+    //pushToLogin(context);
   }
 
-  pushToHomePage(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(
-          title: "Gas Calculator",
-        ),
-      ),
-    );
-  }
+  // pushToHomePage(BuildContext context) {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => HomePage(
+  //         title: "Gas Calculator",
+  //       ),
+  //     ),
+  //   );
+  // }
 
   pushToLogin(BuildContext context) {
     Navigator.pushReplacement(

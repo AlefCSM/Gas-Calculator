@@ -5,7 +5,7 @@ import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
-import 'package:gas_calculator/stores/login/login_store.dart';
+import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:get_it/get_it.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    loginStore.getUser();
   }
 
   @override
@@ -91,7 +90,6 @@ class _LoginPageState extends State<LoginPage> {
               child: CustomTextFormField(
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
-                onlyLowerCase: true,
                 textInputAction: TextInputAction.next,
                 onSaved: (value) => loginStore.email = value,
                 validator: (value) {
@@ -205,7 +203,6 @@ class _LoginPageState extends State<LoginPage> {
               child: CustomTextFormField(
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
-                onlyLowerCase: true,
                 textInputAction: TextInputAction.next,
                 onSaved: (value) => loginStore.email = value,
                 validator: (value) {
@@ -224,9 +221,9 @@ class _LoginPageState extends State<LoginPage> {
               child: SubmitButton(
                 text: "Send e-mail",
                 onPressed: () {
-                if(_lostPasswordFormKey.currentState.validate()){
-                  _lostPasswordFormKey.currentState.save();
-                  loginStore.resetEmail();
+                  if (_lostPasswordFormKey.currentState.validate()) {
+                    _lostPasswordFormKey.currentState.save();
+                    loginStore.resetEmail();
                   }
                 },
               ),
@@ -296,7 +293,6 @@ class _LoginPageState extends State<LoginPage> {
               child: CustomTextFormField(
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
-                onlyLowerCase: true,
                 textInputAction: TextInputAction.next,
                 onSaved: (value) => loginStore.email = value,
                 validator: (value) {
