@@ -51,7 +51,7 @@ abstract class _SynchronizationStore with Store {
 
     for (final vehicle in firebaseVehicleList) {
       databaseVehicleList =
-          await vehiclePersistence.getVehicles(firebaseId: vehicle.firebaseId);
+          await vehiclePersistence.getVehicles(firebaseId: vehicle.firebaseId,filterDeleted: false);
       if (databaseVehicleList.length < 1) {
         vehiclePersistence.create(vehicle);
       }
@@ -77,7 +77,6 @@ abstract class _SynchronizationStore with Store {
     }
 
     databaseVehicleList = await vehiclePersistence.getVehicles(deleted: true);
-
     for (final vehicle in databaseVehicleList) {
       await vehicleRepository.deleteFirebaseVehicle(
           userId: userId, vehicle: vehicle);

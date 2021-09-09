@@ -45,8 +45,8 @@ class Vehicle {
         deleted: deleted ?? this.deleted,
       );
 
-  Vehicle.fromJson(Map<String, dynamic> json, {bool sync = false}) {
-    if (!sync) {
+  Vehicle.fromJson(Map<String, dynamic> json, {bool firebase = false}) {
+    if (!firebase) {
       id = int.parse('${json[VehicleFields.id]}');
       selected = json[VehicleFields.selected] == 1;
     }

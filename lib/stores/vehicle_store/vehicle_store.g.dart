@@ -47,6 +47,21 @@ mixin _$VehicleStore on _VehicleStore, Store {
     });
   }
 
+  final _$loadingAtom = Atom(name: '_VehicleStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
+    });
+  }
+
   final _$vehiclesListAtom = Atom(name: '_VehicleStore.vehiclesList');
 
   @override
@@ -88,6 +103,17 @@ mixin _$VehicleStore on _VehicleStore, Store {
   }
 
   @override
+  dynamic setLoading(bool value) {
+    final _$actionInfo = _$_VehicleStoreActionController.startAction(
+        name: '_VehicleStore.setLoading');
+    try {
+      return super.setLoading(value);
+    } finally {
+      _$_VehicleStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic setVehiclesList(List<Vehicle> value) {
     final _$actionInfo = _$_VehicleStoreActionController.startAction(
         name: '_VehicleStore.setVehiclesList');
@@ -103,6 +129,7 @@ mixin _$VehicleStore on _VehicleStore, Store {
     return '''
 currentVehicle: ${currentVehicle},
 selectedVehicle: ${selectedVehicle},
+loading: ${loading},
 vehiclesList: ${vehiclesList},
 hasVehicleSelected: ${hasVehicleSelected}
     ''';

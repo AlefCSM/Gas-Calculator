@@ -26,7 +26,7 @@ class VehicleRepository {
 
     snapshot.docs.forEach((firebaseVehicle) {
       var json = firebaseVehicle.data() as Map<String, dynamic>;
-      var vehicle = Vehicle.fromJson(json, sync: true);
+      var vehicle = Vehicle.fromJson(json, firebase: true);
       vehicle.firebaseId = firebaseVehicle.id;
       list.add(vehicle);
     });

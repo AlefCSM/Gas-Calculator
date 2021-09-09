@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:gas_calculator/models/refuel_model.dart';
+import 'package:gas_calculator/models/vehicle_model.dart';
 import 'gas_calculatore_database.dart';
 
 class RefuelPersistence {
@@ -27,16 +28,21 @@ class RefuelPersistence {
       String firebaseId = "",
       bool withoutFirebaseId = false,
       bool withFirebaseId = false,
-      bool deleted = false}) async {
+      bool deleted = false,
+      bool filterDeleted = true}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
-    String where =
-        '${RefuelFields.vehicleId} = ? AND ${RefuelFields.deleted} = ?';
-    List whereArgs = [vehicleId];
-    if (deleted) {
-      whereArgs.add(1);
-    } else {
-      whereArgs.add(0);
+    String where = "1 = 1";
+    List whereArgs = [];
+
+    if (filterDeleted) {
+      where += ' AND ${RefuelFields.vehicleId} = ? AND ${RefuelFields.deleted} = ?';
+      whereArgs = [vehicleId];
+      if (deleted) {
+        whereArgs.add(1);
+      } else {
+        whereArgs.add(0);
+      }
     }
 
     if (firebaseId.isNotEmpty) {
@@ -44,10 +50,9 @@ class RefuelPersistence {
       whereArgs.add(firebaseId);
     } else if (withoutFirebaseId) {
       where += " AND ifnull(${RefuelFields.firebaseId}, '') = ''";
-    }else if(withFirebaseId){
+    } else if (withFirebaseId) {
       where += " AND ifnull(${RefuelFields.firebaseId}, '') != ''";
     }
-
 
     final queryResult =
         await db.query(tableRefuels, where: where, whereArgs: whereArgs);
@@ -103,11 +108,11 @@ class RefuelPersistence {
     }
   }
 
-  Future<bool> delete(int id) async {
+  Future<bool> delete(Refuel refuel) async {
     final db = await GasCalculatorDatabase.instance.database;
-
-    final deletedRows = await db
-        .delete(tableRefuels, where: '${RefuelFields.id} = ?', whereArgs: [id]);
+    refuel.deleted = true;
+    final deletedRows = await db.update(tableRefuels, refuel.toJson(),
+        where: '${RefuelFields.id} = ?', whereArgs: [refuel.id]);
 
     await db.close();
     return deletedRows > 0;

@@ -26,15 +26,20 @@ class VehiclePersistence {
       {String firebaseId = "",
       bool withoutFirebaseId = false,
       bool withFirebaseId = false,
+      bool filterDeleted = true,
       bool deleted = false}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
-    String where = "${VehicleFields.deleted} = ?";
+    String where = "1=1 ";
     List whereArgs = [];
-    if (deleted) {
-      whereArgs.add(1);
-    } else {
-      whereArgs.add(0);
+
+    if (filterDeleted) {
+      where += "AND ${VehicleFields.deleted} = ?";
+      if (deleted) {
+        whereArgs.add(1);
+      } else {
+        whereArgs.add(0);
+      }
     }
 
     if (firebaseId.isNotEmpty) {
@@ -42,7 +47,7 @@ class VehiclePersistence {
       whereArgs.add(firebaseId);
     } else if (withoutFirebaseId) {
       where += " AND ifnull(${VehicleFields.firebaseId}, '') = ''";
-    }else if(withFirebaseId){
+    } else if (withFirebaseId) {
       where += " AND ifnull(${VehicleFields.firebaseId}, '') != ''";
     }
 
@@ -74,12 +79,13 @@ class VehiclePersistence {
     }
   }
 
-  Future<int> deletedVehicle({@required int vehicleId}) async {
+  Future<int> deleteVehicle({@required Vehicle vehicle}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
-    final deletedRows = await db.delete(tableVehicles,
+    vehicle.deleted = true;
+    final deletedRows = await db.update(tableVehicles, vehicle.toJson(),
         where: '${VehicleFields.deleted} = ? AND ${VehicleFields.id} = ?',
-        whereArgs: [0, vehicleId]);
+        whereArgs: [0, vehicle.id]);
 
     await db.close();
     return deletedRows;

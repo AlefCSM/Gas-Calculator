@@ -40,7 +40,6 @@ class GasCalculatorDatabase {
       ${FuelTypeFields.id} $idType,
       ${FuelTypeFields.name} $textTypeNotNull
     ); ''');
-print(1);
     await db.execute('''    
     CREATE TABLE $tableVehicles (
       ${VehicleFields.id} $idType,
@@ -50,7 +49,6 @@ print(1);
       ${VehicleFields.selected} $integerTypeNotNull,
       ${VehicleFields.deleted} $integerTypeNotNull
     ); ''');
-    print(2);
     await db.execute('''    
     CREATE TABLE $tableRefuels (
       ${RefuelFields.id} $idType,
@@ -66,8 +64,6 @@ print(1);
       FOREIGN KEY (${RefuelFields.vehicleId}) REFERENCES $tableVehicles(${VehicleFields.id}),
       FOREIGN KEY (${RefuelFields.fuelTypeId}) REFERENCES $tableFuelTypes(${FuelTypeFields.id})
     ); ''');
-
-    print(3);
 
     await db.execute('''    
     INSERT INTO $tableFuelTypes (${FuelTypeFields.name}) values ('Ethanol');

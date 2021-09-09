@@ -16,6 +16,9 @@ abstract class _VehicleStore with Store {
   Vehicle selectedVehicle = Vehicle();
 
   @observable
+  bool loading = false;
+
+  @observable
   ObservableList<Vehicle> vehiclesList = ObservableList.of([]);
 
   @action
@@ -25,22 +28,43 @@ abstract class _VehicleStore with Store {
   setSelectedVehicle(Vehicle value) => selectedVehicle = value;
 
   @action
+  setLoading(bool value) => loading = value;
+
+  @action
   setVehiclesList(List<Vehicle> value) =>
       vehiclesList = ObservableList.of(value);
 
   @computed
-  get hasVehicleSelected => selectedVehicle.id>0;
+  get hasVehicleSelected => selectedVehicle.id > 0;
 
-  Future<Vehicle> saveVehicle() async {
+  Future<bool> saveVehicle() async {
     if (vehiclesList.length == 0) {
       currentVehicle.selected = true;
     }
 
-  return await vehiclePersistence.create(currentVehicle);
+    var result = await vehiclePersistence.create(currentVehicle);
+
+    return result != null;
   }
 
-  getVehicles() async =>
-      setVehiclesList(await vehiclePersistence.getVehicles());
+  Future<bool> editVehicle() async {
+    var result = await vehiclePersistence.update(currentVehicle);
+
+    return result > 0;
+  }
+
+  Future<bool> deleteVehicle() async {
+    var result =
+        await vehiclePersistence.deleteVehicle(vehicle: currentVehicle);
+
+    return result > 0;
+  }
+
+  getVehicles() async {
+    setLoading(true);
+    setVehiclesList(await vehiclePersistence.getVehicles());
+    setLoading(false);
+  }
 
   getSelectedVehicle() async =>
       setSelectedVehicle(await vehiclePersistence.getSelectedVehicle());

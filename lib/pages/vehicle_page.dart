@@ -10,9 +10,11 @@ import 'package:get_it/get_it.dart';
 class VehiclePage extends StatelessWidget {
   final String label;
   final bool firstVehicle;
+  final bool edit;
+  bool success = false;
   final _key = GlobalKey<FormState>();
 
-  VehiclePage({this.label = "", this.firstVehicle =false});
+  VehiclePage({this.label = "", this.firstVehicle = false, this.edit = false});
 
   final VehicleStore vehicleStore = GetIt.I<VehicleStore>();
 
@@ -32,6 +34,7 @@ class VehiclePage extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 10),
                 child: CustomTextFormField(
                   hint: "Vehicle name",
+                  initialValue: vehicleStore.currentVehicle.name ?? "",
                   textInputAction: TextInputAction.next,
                   onSaved: (value) => vehicleStore.currentVehicle.name = value,
                   validator: (value) {
@@ -50,7 +53,10 @@ class VehiclePage extends StatelessWidget {
                   ],
                   textInputAction: TextInputAction.done,
                   keyboardType: TextInputType.number,
-                  onSaved: (value) => vehicleStore.currentVehicle.fuelCapacity = double.parse(value),
+                  initialValue:
+                      "${vehicleStore.currentVehicle.fuelCapacity}" ?? "",
+                  onSaved: (value) => vehicleStore.currentVehicle.fuelCapacity =
+                      double.parse(value),
                   validator: (value) {
                     if (value.isEmpty || value == null) {
                       return "Fill this field";
@@ -59,33 +65,44 @@ class VehiclePage extends StatelessWidget {
                 ),
               ),
               Container(
+                margin: EdgeInsets.only(bottom: 10),
                 child: SubmitButton(
-                  text: "Add",
-                  onPressed: () {
-                    if(_key.currentState.validate()){
+                  text: "Save",
+                  onPressed: () async {
+                    if (_key.currentState.validate()) {
                       _key.currentState.save();
-                      var teste = vehicleStore.saveVehicle();
 
-                      if(teste == null){
-                        //exibir mensagem de erro
+                      if (edit) {
+                        success = await vehicleStore.editVehicle();
+                      } else {
+                        success = await vehicleStore.saveVehicle();
                       }
-                      else{
+
+                      if (success) {
+                        vehicleStore.getVehicles();
                         Navigator.of(context).pop();
+                      } else {
+                        // exibir mensagem de erro
                       }
                     }
                   },
                 ),
               ),
-              Container(
+              Visibility(
+                visible: edit,
                 child: SubmitButton(
-                  text: "teste",
-                  onPressed: () {
-
+                  text: "Delete",
+                  onPressed: () async {
+                    success = await vehicleStore.deleteVehicle();
+                    if (success) {
                       vehicleStore.getVehicles();
-
+                      Navigator.of(context).pop();
+                    } else {
+                      // exibir mensagem de erro
+                    }
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),
