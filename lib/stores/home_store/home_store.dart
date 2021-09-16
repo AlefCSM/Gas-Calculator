@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -21,7 +20,7 @@ abstract class _HomeStore with Store {
   get homePageIndex => 0;
   get chartPageIndex => 1;
 
- void navigateToPage({@required BuildContext context,@required Widget page}){
+ void navigateToPage({required BuildContext context,required Widget page}){
    Navigator.push(
      context,
      MaterialPageRoute(

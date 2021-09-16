@@ -7,15 +7,15 @@ class CustomErrorText extends StatelessWidget {
   final TextAlign align;
 
   CustomErrorText({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
     this.align = TextAlign.center,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: text != null,
+      visible: text.isNotEmpty,
       child: Text(
         text,
         style: TextStyle(

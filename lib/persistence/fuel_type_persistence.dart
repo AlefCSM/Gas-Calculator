@@ -15,7 +15,7 @@ class FuelTypePersistence {
     }
   }
 
-  Future<FuelType> getFuelTypeById(int id) async{
+  Future<FuelType?> getFuelTypeById(int id) async{
     final db = await GasCalculatorDatabase.instance.database;
     final queryResult = await db.query(tableFuelTypes);
 

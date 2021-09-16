@@ -1,25 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:gas_calculator/models/refuel_model.dart';
 
 class RefuelRepository {
-  CollectionReference vehiclesReference;
+  late CollectionReference vehiclesReference;
 
   static const USERS_COLLECTION = "users";
   static const VEHICLES_COLLECTION = "vehicles";
   static const REFUELS_COLLECTION = "refuels";
 
   void setReference(String userId) {
-    if (vehiclesReference == null) {
       vehiclesReference = FirebaseFirestore.instance
           .collection(USERS_COLLECTION)
           .doc(userId)
           .collection(VEHICLES_COLLECTION);
-    }
   }
 
   Future<List<Refuel>> getFirebaseRefuels(
-      {@required String userId, @required String vehicleFirebaseId}) async {
+      {required String userId, required String vehicleFirebaseId}) async {
     List<Refuel> list = [];
 
     setReference(userId);
@@ -29,7 +26,7 @@ class RefuelRepository {
 
     snapshot.docs.forEach((firebaseRefuel) {
       var json = firebaseRefuel.data() as Map<String, dynamic>;
-      var refuel = Refuel.fromJson(json, sync: true);
+      var refuel = Refuel.fromJson(json, firebase: true);
       refuel.firebaseId = firebaseRefuel.id;
       list.add(refuel);
     });
@@ -38,9 +35,9 @@ class RefuelRepository {
   }
 
   Future<String> saveFirebaseRefuel(
-      {@required String userId,
-      @required String vehicleFirebaseId,
-      @required Refuel refuel}) async {
+      {required String userId,
+      required String vehicleFirebaseId,
+      required Refuel refuel}) async {
     setReference(userId);
 
     var document = await vehiclesReference
@@ -52,9 +49,9 @@ class RefuelRepository {
   }
 
   Future<void> updateFirebaseRefuel(
-      {@required String userId,
-      @required String vehicleFirebaseId,
-      @required Refuel refuel}) async {
+      {required String userId,
+      required String vehicleFirebaseId,
+      required Refuel refuel}) async {
     setReference(userId);
 
     await vehiclesReference
@@ -65,9 +62,9 @@ class RefuelRepository {
   }
 
   Future<void> deleteFirebaseRefuel(
-      {@required String userId,
-      @required String vehicleFirebaseId,
-      @required Refuel refuel}) async {
+      {required String userId,
+      required String vehicleFirebaseId,
+      required Refuel refuel}) async {
     setReference(userId);
     await vehiclesReference
         .doc(vehicleFirebaseId)

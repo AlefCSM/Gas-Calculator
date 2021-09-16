@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gas_calculator/models/vehicle_model.dart';
 import 'package:gas_calculator/persistence/vehicle_persistence.dart';
 import 'package:mobx/mobx.dart';
@@ -21,6 +22,10 @@ abstract class _VehicleStore with Store {
   @observable
   ObservableList<Vehicle> vehiclesList = ObservableList.of([]);
 
+  @observable
+  ObservableList<DropdownMenuItem<Vehicle>> vehiclesDrodownList =
+      ObservableList.of([]);
+
   @action
   setCurrentVehicle(Vehicle value) => currentVehicle = value;
 
@@ -35,7 +40,7 @@ abstract class _VehicleStore with Store {
       vehiclesList = ObservableList.of(value);
 
   @computed
-  get hasVehicleSelected => selectedVehicle.id > 0;
+  get hasVehicleSelected => selectedVehicle.id !=null;
 
   Future<bool> saveVehicle() async {
     if (vehiclesList.length == 0) {
@@ -43,8 +48,7 @@ abstract class _VehicleStore with Store {
     }
 
     var result = await vehiclePersistence.create(currentVehicle);
-
-    return result != null;
+    return result.id != null;
   }
 
   Future<bool> editVehicle() async {
@@ -68,4 +72,17 @@ abstract class _VehicleStore with Store {
 
   getSelectedVehicle() async =>
       setSelectedVehicle(await vehiclePersistence.getSelectedVehicle());
+
+  void buildDropdownList() {
+    vehiclesDrodownList.clear();
+    for (final vehicle in vehiclesList) {
+      vehiclesDrodownList
+          .add(DropdownMenuItem(value: vehicle, child: Text(vehicle.name)));
+    }
+  }
+
+  Future<void> updateSelectedVehicle(int vehicleId) async {
+    await vehiclePersistence.updateSelectedVehicle(vehicleId);
+    await getSelectedVehicle();
+  }
 }

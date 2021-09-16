@@ -9,19 +9,19 @@ part of 'refuel_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$RefuelStore on _RefuelStore, Store {
-  Computed<bool> _$fillPriceComputed;
+  Computed<bool>? _$fillPriceComputed;
 
   @override
   bool get fillPrice => (_$fillPriceComputed ??=
           Computed<bool>(() => super.fillPrice, name: '_RefuelStore.fillPrice'))
       .value;
-  Computed<bool> _$fillTotalComputed;
+  Computed<bool>? _$fillTotalComputed;
 
   @override
   bool get fillTotal => (_$fillTotalComputed ??=
           Computed<bool>(() => super.fillTotal, name: '_RefuelStore.fillTotal'))
       .value;
-  Computed<bool> _$fillLitresComputed;
+  Computed<bool>? _$fillLitresComputed;
 
   @override
   bool get fillLitres =>

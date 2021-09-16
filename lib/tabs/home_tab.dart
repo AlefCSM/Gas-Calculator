@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
+import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
+import 'package:gas_calculator/components/refuel_card.dart';
+import 'package:gas_calculator/models/vehicle_model.dart';
 import 'package:gas_calculator/pages/refuel_page.dart';
 import 'package:gas_calculator/pages/vehicle_page.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
@@ -25,24 +29,34 @@ class _HomeTabState extends State<HomeTab> {
       GetIt.I<SynchronizationStore>();
 
   Future<void> initRefuelVariables() async {
-    refuelStore.getLastRefuel(vehicleId: vehicleStore.selectedVehicle.id);
-
+    if (vehicleStore.selectedVehicle.id != null) {
+      refuelStore.getLastRefuel(vehicleId: vehicleStore.selectedVehicle.id!);
+    }
     if (refuelStore.fuelTypeList.length == 0) {
       await refuelStore.getFuelTypes();
     }
     if (refuelStore.fuelTypeDrodownList.length == 0) {
-      refuelStore.buildFuelList();
+      refuelStore.buildFuelTypeList();
     }
   }
 
   Future<void> initHomeVariables() async {
-    if (!vehicleStore.hasVehicleSelected) {
-      await vehicleStore.getSelectedVehicle();
-    }
+    await vehicleStore.getVehicles();
+    vehicleStore.buildDropdownList();
 
     await vehicleStore.getSelectedVehicle();
-    await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id);
-    synchronizationStore.sync();
+    if (vehicleStore.selectedVehicle.id != null) {
+      await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
+    }
+    await synchronizationStore.sync().then((value) async {
+      await vehicleStore.getVehicles();
+
+      if (vehicleStore.vehiclesList.isNotEmpty &&
+          vehicleStore.selectedVehicle.id == null) {
+        vehicleStore.setSelectedVehicle(vehicleStore.vehiclesList[0]);
+      }
+      vehicleStore.buildDropdownList();
+    });
   }
 
   @override
@@ -60,53 +74,119 @@ class _HomeTabState extends State<HomeTab> {
         body: Column(
           children: [
             Observer(
-              builder: (_) => Visibility(
-                visible: vehicleStore.selectedVehicle.id > 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                        child: Column(
-                      children: [
-                        Text("Selected vehicle"),
-                        Text("${vehicleStore.selectedVehicle.name}")
-                      ],
-                    )),
-                    IconButton(
-                        icon: Icon(Icons.swap_horiz),
-                        onPressed: () {
-                          synchronizationStore.sync();
-                        })
-                  ],
-                ),
-                replacement: Text("There are no vehicles selected"),
-              ),
+              builder: (_) {
+                return Visibility(
+                  visible: vehicleStore.selectedVehicle.id != null ||
+                      vehicleStore.vehiclesList.isNotEmpty,
+                  child: Column(
+                    children: [
+                      Text("Selected vehicle"),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: CustomDropdown(
+                          value: vehicleStore.selectedVehicle.id != null
+                              ? vehicleStore.selectedVehicle
+                              : vehicleStore.vehiclesList.length > 0
+                                  ? vehicleStore.vehiclesList[0]
+                                  : Vehicle(),
+                          dropdownMenuItemList:
+                              vehicleStore.vehiclesDrodownList,
+                          onChanged: (Vehicle? vehicle) async {
+                            if (vehicle != null) {
+                              await vehicleStore
+                                  .updateSelectedVehicle(vehicle.id!);
+                              refuelStore.getRefuels(
+                                  vehicleId: vehicleStore.selectedVehicle.id!);
+                            }
+                          },
+                          isEnabled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                  replacement: Text("There are no vehicles selected"),
+                );
+              },
             ),
-            SubmitButton(
-                text: "Add new Refuel",
-                onPressed: () async {
-                  await initRefuelVariables();
+            Container(
+              margin: EdgeInsets.only(
+                bottom: 10,
+              ),
+              child: SubmitButton(
+                  text: "Add new Refuel",
+                  onPressed: () async {
+                    await initRefuelVariables();
 
-                  if (vehicleStore.hasVehicleSelected) {
-                    homeStore.navigateToPage(
-                        context: context,
-                        page: RefuelPage(
-                          label: "New refuel",
-                        ));
-                  } else {
-                    homeStore.navigateToPage(
-                        context: context,
-                        page: VehiclePage(label: "New vehicle"));
-                  }
-                }),
+                    if (vehicleStore.hasVehicleSelected) {
+                      refuelStore.setCurrentFuelType(refuelStore.fuelTypeList[0]);
+                      homeStore.navigateToPage(
+                          context: context,
+                          page: RefuelPage(
+                            label: "New refuel",
+                          ));
+                    } else {
+                      vehicleStore.setCurrentVehicle(Vehicle());
+                      homeStore.navigateToPage(
+                          context: context,
+                          page: VehiclePage(label: "New vehicle"));
+                    }
+                  }),
+            ),
             Observer(
                 builder: (_) => ListView.builder(
                     reverse: true,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: refuelStore.refuelList.length,
-                    itemBuilder: (contexts, index) {
-                      return Text("${refuelStore.refuelList[index].odometer}");
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Stack(children: [
+                            Container(
+                              margin: EdgeInsets.only(left: 20, right: 20),
+                              width: 10,
+                              height: 100,
+                              color: kBlack,
+                              child: Center(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: 15,
+                                  itemBuilder: (ctx, i) => Align(
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      width: 2,
+                                      height: 6,
+                                      color: kYellowColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              heightFactor: 3,
+                              child: Container(
+                                margin: EdgeInsets.only(left: 9),
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                  color: kGreenColor,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.local_gas_station,
+                                  color: kWhiteColor,
+                                ),
+                              ),
+                            )
+                          ]),
+                          Expanded(
+                              child: RefuelCard(
+                                  refuel: refuelStore.refuelList[index]))
+                        ],
+                      );
                     }))
           ],
         ),

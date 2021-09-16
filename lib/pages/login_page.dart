@@ -91,9 +91,11 @@ class _LoginPageState extends State<LoginPage> {
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                onSaved: (value) => loginStore.email = value,
+                onSaved: (value) {
+                  if (value != null) loginStore.email = value;
+                },
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                   if (!EmailValidator.validate(value)) {
@@ -111,11 +113,13 @@ class _LoginPageState extends State<LoginPage> {
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.text,
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                 },
-                onSaved: (value) => loginStore.password = value,
+                onSaved: (value) {
+                  if (value != null) loginStore.password = value;
+                },
               ),
             ),
             Container(
@@ -123,8 +127,8 @@ class _LoginPageState extends State<LoginPage> {
               child: SubmitButton(
                 text: "Login",
                 onPressed: () {
-                  if (_loginFormKey.currentState.validate()) {
-                    _loginFormKey.currentState.save();
+                  if (_loginFormKey.currentState!.validate()) {
+                    _loginFormKey.currentState!.save();
                     loginStore.signInWithEmail(context);
                   }
                 },
@@ -204,9 +208,11 @@ class _LoginPageState extends State<LoginPage> {
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                onSaved: (value) => loginStore.email = value,
+                onSaved: (value) {
+                  if (value != null) loginStore.email = value;
+                },
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                   if (!EmailValidator.validate(value)) {
@@ -221,8 +227,8 @@ class _LoginPageState extends State<LoginPage> {
               child: SubmitButton(
                 text: "Send e-mail",
                 onPressed: () {
-                  if (_lostPasswordFormKey.currentState.validate()) {
-                    _lostPasswordFormKey.currentState.save();
+                  if (_lostPasswordFormKey.currentState!.validate()) {
+                    _lostPasswordFormKey.currentState!.save();
                     loginStore.resetEmail();
                   }
                 },
@@ -280,9 +286,11 @@ class _LoginPageState extends State<LoginPage> {
               child: CustomTextFormField(
                 hint: "Profile name",
                 textInputAction: TextInputAction.next,
-                onSaved: (value) => loginStore.profileName = value,
+                onSaved: (value) {
+                  if (value != null) loginStore.profileName = value;
+                },
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                 },
@@ -294,9 +302,11 @@ class _LoginPageState extends State<LoginPage> {
                 hint: "E-mail",
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                onSaved: (value) => loginStore.email = value,
+                onSaved: (value) {
+                  if (value != null) loginStore.email = value;
+                },
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                   if (!EmailValidator.validate(value)) {
@@ -315,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.text,
                 onChanged: (value) => loginStore.setPassword(value),
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                 },
@@ -331,7 +341,7 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.text,
                 onChanged: (value) => loginStore.setConfirmPassword(value),
                 validator: (value) {
-                  if (value.isEmpty || value == null) {
+                  if (value.isEmpty ) {
                     return "Fill this field";
                   }
                   if (value != loginStore.password) {
@@ -346,8 +356,8 @@ class _LoginPageState extends State<LoginPage> {
               child: SubmitButton(
                 text: "Register",
                 onPressed: () {
-                  if (_registerFormKey.currentState.validate()) {
-                    _registerFormKey.currentState.save();
+                  if (_registerFormKey.currentState!.validate()) {
+                    _registerFormKey.currentState!.save();
                     loginStore.register(context);
                   }
                 },

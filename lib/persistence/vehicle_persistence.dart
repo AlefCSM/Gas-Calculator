@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:gas_calculator/models/vehicle_model.dart';
 import 'gas_calculatore_database.dart';
 
@@ -79,7 +78,23 @@ class VehiclePersistence {
     }
   }
 
-  Future<int> deleteVehicle({@required Vehicle vehicle}) async {
+  Future<void> updateSelectedVehicle(int vehicleId) async {
+    final db = await GasCalculatorDatabase.instance.database;
+    Map<String, dynamic> values = Map();
+
+    values["${VehicleFields.selected}"] = 0;
+    await db.update(tableVehicles, values,
+        where: "${VehicleFields.id} != ?", whereArgs: [vehicleId]);
+
+    values["${VehicleFields.selected}"] = 1;
+    await db.update(tableVehicles, values,
+        where: "${VehicleFields.id} = ?", whereArgs: [vehicleId]);
+
+    await db.close();
+    // return id;
+  }
+
+  Future<int> deleteVehicle({required Vehicle vehicle}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
     vehicle.deleted = true;

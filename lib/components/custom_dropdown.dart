@@ -4,14 +4,14 @@ import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constant
 
 class CustomDropdown<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>> dropdownMenuItemList;
-  final ValueChanged<T> onChanged;
+  final ValueChanged<T?>? onChanged;
   final T value;
   final bool isEnabled;
   CustomDropdown({
-    Key key,
-    @required this.dropdownMenuItemList,
-    @required this.onChanged,
-    @required this.value,
+    Key? key,
+    required this.dropdownMenuItemList,
+    required this.onChanged,
+    required this.value,
     this.isEnabled = true,
   }) : super(key: key);
   @override

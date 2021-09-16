@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:gas_calculator/models/refuel_model.dart';
-import 'package:gas_calculator/models/vehicle_model.dart';
 import 'gas_calculatore_database.dart';
 
 class RefuelPersistence {
@@ -24,40 +22,43 @@ class RefuelPersistence {
   }
 
   Future<List<Refuel>> getRefuels(
-      {@required int vehicleId,
+      {required int vehicleId,
       String firebaseId = "",
       bool withoutFirebaseId = false,
       bool withFirebaseId = false,
       bool deleted = false,
       bool filterDeleted = true}) async {
     final db = await GasCalculatorDatabase.instance.database;
+    List<Map<String, Object?>> queryResult = [];
 
-    String where = "1 = 1";
-    List whereArgs = [];
+      String where = "1 = 1";
+      List whereArgs = [];
 
-    if (filterDeleted) {
-      where += ' AND ${RefuelFields.vehicleId} = ? AND ${RefuelFields.deleted} = ?';
-      whereArgs = [vehicleId];
-      if (deleted) {
-        whereArgs.add(1);
-      } else {
-        whereArgs.add(0);
+      if (filterDeleted) {
+        where +=
+            ' AND ${RefuelFields.vehicleId} = ? AND ${RefuelFields.deleted} = ?';
+        whereArgs = [vehicleId];
+        if (deleted) {
+          whereArgs.add(1);
+        } else {
+          whereArgs.add(0);
+        }
       }
-    }
 
-    if (firebaseId.isNotEmpty) {
-      where += " AND ${RefuelFields.firebaseId} = ?";
-      whereArgs.add(firebaseId);
-    } else if (withoutFirebaseId) {
-      where += " AND ifnull(${RefuelFields.firebaseId}, '') = ''";
-    } else if (withFirebaseId) {
-      where += " AND ifnull(${RefuelFields.firebaseId}, '') != ''";
-    }
+      if (firebaseId.isNotEmpty) {
+        where += " AND ${RefuelFields.firebaseId} = ?";
+        whereArgs.add(firebaseId);
+      } else if (withoutFirebaseId) {
+        where += " AND ifnull(${RefuelFields.firebaseId}, '') = ''";
+      } else if (withFirebaseId) {
+        where += " AND ifnull(${RefuelFields.firebaseId}, '') != ''";
+      }
 
-    final queryResult =
-        await db.query(tableRefuels, where: where, whereArgs: whereArgs);
+      queryResult =
+          await db.query(tableRefuels, where: where, whereArgs: whereArgs);
 
-    await db.close();
+      await db.close();
+
     if (queryResult.isNotEmpty) {
       return queryResult
           .map((Map<String, dynamic> json) => Refuel.fromJson(json))
@@ -68,7 +69,7 @@ class RefuelPersistence {
   }
 
   Future<Refuel> getPreviousRefuel(
-      {@required int vehicleId, int refuelId = 0}) async {
+      {required int vehicleId, int refuelId = 0}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
     String where =
@@ -93,7 +94,7 @@ class RefuelPersistence {
     }
   }
 
-  Future<Refuel> getRefuelById(int id) async {
+  Future<Refuel?> getRefuelById(int id) async {
     final db = await GasCalculatorDatabase.instance.database;
 
     final queryResult = await db.query(tableRefuels,
@@ -115,6 +116,22 @@ class RefuelPersistence {
         where: '${RefuelFields.id} = ?', whereArgs: [refuel.id]);
 
     await db.close();
+    return deletedRows > 0;
+  }
+
+  Future<bool> deleteRefuelsFromVehicle(int vehicleId) async {
+    final db = await GasCalculatorDatabase.instance.database;
+
+    Map<String, dynamic> values = Map();
+
+    values["${RefuelFields.deleted}"] = 1;
+
+    final deletedRows = await db.update(tableRefuels, values,
+        where: "${RefuelFields.vehicleId} = ?", whereArgs: [vehicleId]);
+
+    await db.close();
+
+    print(deletedRows);
     return deletedRows > 0;
   }
 

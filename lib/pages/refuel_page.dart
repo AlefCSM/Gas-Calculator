@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
+import 'package:gas_calculator/models/fuel_type_model.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:get_it/get_it.dart';
@@ -36,12 +37,12 @@ class _RefuelPageState extends State<RefuelPage> {
       MaskTextInputFormatter(mask: '##:##', filter: {"#": RegExp(r'[0-9]')});
   final DateFormat hourFormatter = DateFormat('HH:mm');
 
-  String initialDate;
-  String initialHour;
+  late final String initialDate;
+  late final String initialHour;
   bool showModal = false;
 
   Future<void> datePicker(BuildContext context) async {
-    final DateTime date = await showDatePicker(
+    final DateTime? date = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2015),
@@ -105,9 +106,11 @@ class _RefuelPageState extends State<RefuelPage> {
                             keyboardType: TextInputType.datetime,
                             textInputAction: TextInputAction.next,
                             inputFormatters: [maskDateFormatter],
-                            onSaved: (value) => refuelStore.date = value,
+                            onSaved: (value) {
+                              if (value != null) refuelStore.date = value;
+                            },
                             validator: (value) {
-                              if (value.isEmpty || value == null) {
+                              if (value.isEmpty) {
                                 return "Fill this field";
                               }
 
@@ -147,9 +150,11 @@ class _RefuelPageState extends State<RefuelPage> {
                                   controller: timeController,
                                   textInputAction: TextInputAction.next,
                                   inputFormatters: [maskHourFormatter],
-                                  onSaved: (value) => refuelStore.time = value,
+                                  onSaved: (value) {
+                                    if (value != null) refuelStore.time = value;
+                                  },
                                   validator: (value) {
-                                    if (value.isEmpty || value == null) {
+                                    if (value.isEmpty) {
                                       return "Fill this field";
                                     }
                                     var stringValue = value.toString();
@@ -184,13 +189,16 @@ class _RefuelPageState extends State<RefuelPage> {
                         CurrencyTextInputFormatter(decimalDigits: 2, symbol: "")
                       ],
                       textInputAction: TextInputAction.next,
-                      onSaved: (String value) => refuelStore.currentRefuel
-                          .odometer = double.parse(value.replaceAll(",", "")),
+                      onSaved: (value) {
+                        if (value != null)
+                          refuelStore.currentRefuel.odometer =
+                              double.parse(value.replaceAll(",", ""));
+                      },
                       validator: (value) {
-                        if (value.isEmpty || value == null) {
+                        if (value.isEmpty) {
                           return "Fill this field";
                         }
-                        if (refuelStore.lastRefuel.id > 0) {
+                        if (refuelStore.lastRefuel.id!=null) {
                           if (double.parse(value) <=
                               refuelStore.lastRefuel.odometer) {
                             return "Odometer should be bigger than last refuel";
@@ -199,7 +207,7 @@ class _RefuelPageState extends State<RefuelPage> {
                       },
                     ),
                     Visibility(
-                        visible: refuelStore.lastRefuel.id > 0,
+                        visible: refuelStore.lastRefuel.id!=null,
                         child: Text(
                             "Last odometer: ${refuelStore.lastRefuel.odometer}"))
                   ],
@@ -209,13 +217,17 @@ class _RefuelPageState extends State<RefuelPage> {
                   margin: EdgeInsets.only(bottom: 10),
                   child: Observer(
                     builder: (_) => CustomDropdown(
-                      value: refuelStore.currentFuelType ??
-                          refuelStore.fuelTypeList[0],
+                      value: refuelStore.currentFuelType.id > 0
+                          ? refuelStore.currentFuelType
+                          : refuelStore.fuelTypeList[0],
                       dropdownMenuItemList: refuelStore.fuelTypeDrodownList,
-                      onChanged: (value) {
-                        refuelStore.currentRefuel.fuelTypeId = value.id;
-                        refuelStore.setCurrentRefuel(refuelStore.currentRefuel);
-                        refuelStore.setCurrentFuelType(value);
+                      onChanged: (FuelType? value) {
+                        if (value != null) {
+                          refuelStore.currentRefuel.fuelTypeId = value.id;
+                          refuelStore
+                              .setCurrentRefuel(refuelStore.currentRefuel);
+                          refuelStore.setCurrentFuelType(value);
+                        }
                       },
                       isEnabled: true,
                     ),
@@ -238,11 +250,13 @@ class _RefuelPageState extends State<RefuelPage> {
                                 CurrencyTextInputFormatter(
                                     decimalDigits: 3, symbol: "")
                               ],
-                              onSaved: (String value) =>
+                              onSaved: (value) {
+                                if (value != null)
                                   refuelStore.currentRefuel.price =
-                                      double.parse(value.replaceAll(",", "")),
+                                      double.parse(value.replaceAll(",", ""));
+                              },
                               validator: (value) {
-                                if (value.isEmpty || value == null) {
+                                if (value.isEmpty) {
                                   return "Fill this field";
                                 }
                               },
@@ -269,11 +283,13 @@ class _RefuelPageState extends State<RefuelPage> {
                                 CurrencyTextInputFormatter(
                                     decimalDigits: 3, symbol: "")
                               ],
-                              onSaved: (String value) =>
+                              onSaved: (value) {
+                                if (value != null)
                                   refuelStore.currentRefuel.totalCost =
-                                      double.parse(value.replaceAll(",", "")),
+                                      double.parse(value.replaceAll(",", ""));
+                              },
                               validator: (value) {
-                                if (value.isEmpty || value == null) {
+                                if (value.isEmpty) {
                                   return "Fill this field";
                                 }
                               },
@@ -300,11 +316,13 @@ class _RefuelPageState extends State<RefuelPage> {
                                 CurrencyTextInputFormatter(
                                     decimalDigits: 3, symbol: "")
                               ],
-                              onSaved: (String value) =>
+                              onSaved: (value) {
+                                if (value != null)
                                   refuelStore.currentRefuel.litres =
-                                      double.parse(value.replaceAll(",", "")),
+                                      double.parse(value.replaceAll(",", ""));
+                              },
                               validator: (value) {
-                                if (value.isEmpty || value == null) {
+                                if (value.isEmpty) {
                                   return "Fill this field";
                                 }
                               },
@@ -324,17 +342,19 @@ class _RefuelPageState extends State<RefuelPage> {
                 child: SubmitButton(
                   text: "save",
                   onPressed: () async {
-                    if (_key.currentState.validate()) {
-                      _key.currentState.save();
+                    if (_key.currentState!.validate()) {
+                      _key.currentState!.save();
                       refuelStore.currentRefuel.date =
                           '${refuelStore.date} ${refuelStore.time}';
                       refuelStore.currentRefuel.vehicleId =
-                          vehicleStore.selectedVehicle.id;
-                      var saved = await refuelStore.saveVehicle();
+                          vehicleStore.selectedVehicle.id!;
+                      var refuel = await refuelStore.saveRefuel();
 
-                      if (saved == null) {
+                      if (refuel.id == null) {
                         //exibe mensagem de erro
                       } else {
+                        refuelStore.getRefuels(
+                            vehicleId: vehicleStore.selectedVehicle.id!);
                         Navigator.of(context).pop();
                       }
                     }

@@ -8,16 +8,16 @@ import 'package:progress_indicators/progress_indicators.dart';
 class SubmitButton extends StatelessWidget {
   final String text;
   final String prefixIcon;
-  final Function onPressed;
+  final void Function()? onPressed;
   final bool loading;
   final bool disabled;
 
   static const defaultTextFactor = 1.0;
 
   SubmitButton({
-    Key key,
-    @required this.text,
-    @required this.onPressed,
+     Key? key,
+    required this.text,
+    required this.onPressed,
     this.loading = false,
     this.disabled = false,
     this.prefixIcon = "",

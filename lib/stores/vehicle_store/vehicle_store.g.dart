@@ -9,7 +9,7 @@ part of 'vehicle_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$VehicleStore on _VehicleStore, Store {
-  Computed<dynamic> _$hasVehicleSelectedComputed;
+  Computed<dynamic>? _$hasVehicleSelectedComputed;
 
   @override
   dynamic get hasVehicleSelected => (_$hasVehicleSelectedComputed ??=
@@ -77,6 +77,22 @@ mixin _$VehicleStore on _VehicleStore, Store {
     });
   }
 
+  final _$vehiclesDrodownListAtom =
+      Atom(name: '_VehicleStore.vehiclesDrodownList');
+
+  @override
+  ObservableList<DropdownMenuItem<Vehicle>> get vehiclesDrodownList {
+    _$vehiclesDrodownListAtom.reportRead();
+    return super.vehiclesDrodownList;
+  }
+
+  @override
+  set vehiclesDrodownList(ObservableList<DropdownMenuItem<Vehicle>> value) {
+    _$vehiclesDrodownListAtom.reportWrite(value, super.vehiclesDrodownList, () {
+      super.vehiclesDrodownList = value;
+    });
+  }
+
   final _$_VehicleStoreActionController =
       ActionController(name: '_VehicleStore');
 
@@ -131,6 +147,7 @@ currentVehicle: ${currentVehicle},
 selectedVehicle: ${selectedVehicle},
 loading: ${loading},
 vehiclesList: ${vehiclesList},
+vehiclesDrodownList: ${vehiclesDrodownList},
 hasVehicleSelected: ${hasVehicleSelected}
     ''';
   }

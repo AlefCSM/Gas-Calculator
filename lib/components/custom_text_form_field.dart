@@ -7,32 +7,32 @@ import 'package:gas_calculator/components/custom_error_text.dart';
 import 'package:gas_calculator/util/screen_util/screen_util.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String hint;
   final bool isPassword;
-  final Function validator;
-  final Function onSaved;
-  final Function(String) onChanged;
-  final Function onChangeFocus;
-  final TextInputType keyboardType;
-  final TextInputAction textInputAction;
-  final bool onlyLowerCase;
-  final bool onlyUpperCase;
-  final String initialValue;
-  final Key fieldKey;
-  final FocusNode focusNode;
-  final List<TextInputFormatter> inputFormatters;
-  final Widget suffix;
+  final Function(String)? validator;
+  final void Function(String?)? onSaved;
+  final Function(String)? onChanged;
+  final Function(bool)? onChangeFocus;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final bool? onlyLowerCase;
+  final bool? onlyUpperCase;
+  final String? initialValue;
+  final Key? fieldKey;
+  final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
+  final Widget? suffix;
   final bool isEnabled;
   final Color disabledColor;
   final Color backgroundColor;
-  final BoxConstraints suffixIconConstraints;
+  final BoxConstraints? suffixIconConstraints;
   final bool uppercase;
-  final int maxLength;
+  final int? maxLength;
 
   CustomTextFormField({
-    Key key,
-    @required this.hint,
+    Key? key,
+    required this.hint,
     this.isPassword = false,
     this.validator,
     this.keyboardType,
@@ -60,14 +60,15 @@ class CustomTextFormField extends StatefulWidget {
   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
 }
 
-class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUtil {
+class _CustomTextFormFieldState extends State<CustomTextFormField>
+    with ScreenUtil {
   bool showText = false;
   bool _isValid = true;
-  String _messageError = "";
-  bool onlyLowerCase;
-  bool onlyUpperCase;
-  Key key;
-  List<TextInputFormatter> inputFormatters;
+  String? _messageError = "";
+  late bool onlyLowerCase;
+  late bool onlyUpperCase;
+  late Key? key;
+  late List<TextInputFormatter> inputFormatters;
 
   static const _EMPTY_STRING_REPRESENTING_ERROR = "";
 
@@ -75,10 +76,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
   void initState() {
     super.initState();
 
-    onlyUpperCase = widget.onlyUpperCase;
-    onlyUpperCase ??= false;
-    onlyLowerCase = widget.onlyLowerCase;
-    onlyLowerCase ??= false;
+    onlyUpperCase = widget.onlyUpperCase ?? false;
+    onlyLowerCase = widget.onlyLowerCase ?? false;
 
     key = widget.fieldKey;
     key ??= UniqueKey();
@@ -136,7 +135,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
                 onSaved: widget.onSaved,
                 focusNode: widget.focusNode,
                 onEditingComplete: widget.focusNode != null
-                    ? widget.focusNode.nextFocus
+                    ? widget.focusNode!.nextFocus
                     : null,
                 onChanged: widget.onChanged,
                 keyboardType: widget.keyboardType,
@@ -146,7 +145,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
                 validator: (value) {
                   if (widget.validator != null) {
                     final prevMessage = _messageError;
-                    final message = widget.validator(value);
+                    final message = widget.validator!(value ?? "");
                     bool valid = false;
                     if (message == null) {
                       valid = true;
@@ -243,7 +242,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
         _isValid || _messageError == null || _messageError == ""
             ? SizedBox.shrink()
             : CustomErrorText(
-                text: _messageError,
+                text: _messageError ?? "",
                 align: TextAlign.right,
               ),
       ],
@@ -251,15 +250,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> with ScreenUt
   }
 
   void _setFormatters() {
-      inputFormatters = widget.inputFormatters;
-      inputFormatters ??= [];
-
-      if (onlyUpperCase) {
-        inputFormatters
-            .add(FilteringTextInputFormatter.allow(RegExp(r'[^a-z]')));
-      } else if (onlyLowerCase) {
-        inputFormatters
-            .add(FilteringTextInputFormatter.allow(RegExp(r'[^A-Z]')));
-      }
+    inputFormatters = widget.inputFormatters ?? [];
+    if (onlyUpperCase) {
+      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'[^a-z]')));
+    } else if (onlyLowerCase) {
+      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'[^A-Z]')));
+    }
   }
 }

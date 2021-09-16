@@ -51,8 +51,8 @@ abstract class _RefuelStore with Store {
   List<FuelType> fuelTypeList = [];
   List<DropdownMenuItem<FuelType>> fuelTypeDrodownList = [];
 
-  String date;
-  String time;
+  String date="";
+  String time="";
 
   Refuel lastRefuel = Refuel();
 
@@ -72,7 +72,7 @@ abstract class _RefuelStore with Store {
   Refuel currentRefuel = Refuel();
 
   @observable
-  FuelType currentFuelType;
+   FuelType currentFuelType = FuelType(id: FuelTypes.ETHANOL.id,name: FuelTypes.ETHANOL.text);
 
   @action
   setPriceInput(String value) => priceInputController.text = value;
@@ -110,12 +110,12 @@ abstract class _RefuelStore with Store {
   getFuelTypes() async =>
       fuelTypeList = await fuelTypePersistence.getFuelTypes();
 
-  getLastRefuel({@required int vehicleId}) async {
+  getLastRefuel({required int vehicleId}) async {
     lastRefuel =
         await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId);
   }
 
-  getRefuels({@required int vehicleId}) async {
+  getRefuels({required int vehicleId}) async {
     if (vehicleId > 0) {
       setRefuelList(await refuelPersistence.getRefuels(vehicleId: vehicleId));
     }
@@ -148,24 +148,25 @@ abstract class _RefuelStore with Store {
     }
   }
 
-  void buildFuelList() {
+  void buildFuelTypeList() {
     for (final fuelType in fuelTypeList) {
       fuelTypeDrodownList
           .add(DropdownMenuItem(value: fuelType, child: Text(fuelType.name)));
     }
   }
 
-  Future<Refuel> saveVehicle() {
-    if (currentRefuel.id > 0) {
+  Future<Refuel> saveRefuel() {
+    if (currentRefuel.id! > 0) {
       return refuelPersistence.update(currentRefuel);
     } else {
       return refuelPersistence.create(currentRefuel);
     }
   }
 
-  teste({@required String userId}){
+  Future<bool> deleteRefuelsFromVehicle(int vehicleId) async {
+    var result = await refuelPersistence.deleteRefuelsFromVehicle(vehicleId);
+    print(result);
 
-    vehicleRepository.getFirebaseVehicles(userId: userId);
+    return result;
   }
-
 }

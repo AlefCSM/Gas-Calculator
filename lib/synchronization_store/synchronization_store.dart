@@ -30,17 +30,16 @@ abstract class _SynchronizationStore with Store {
   @action
   setSynchronizing(bool value) => synchronizing = value;
 
-  sync() async {
+  Future<void> sync() async {
     if (!synchronizing) {
       setSynchronizing(true);
-      String userId = loginStore.currentUser.uid;
+      String userId = loginStore.currentUser!.uid;
 
       await syncVehicles(userId);
       await syncRefuels(userId);
 
       await refuelPersistence.cleanDeletedRefuels();
       await vehiclePersistence.cleanDeletedVehicles();
-
       setSynchronizing(false);
     }
   }
@@ -87,19 +86,21 @@ abstract class _SynchronizationStore with Store {
     databaseVehicleList = await vehiclePersistence.getVehicles();
 
     for (final vehicle in databaseVehicleList) {
+
+      if(vehicle.id!=null)
       firebaseRefuelList = await refuelRepository.getFirebaseRefuels(
           userId: userId, vehicleFirebaseId: vehicle.firebaseId);
 
       for (final refuel in firebaseRefuelList) {
         databaseRefuelList = await refuelPersistence.getRefuels(
-            vehicleId: vehicle.id, firebaseId: refuel.firebaseId);
+            vehicleId: vehicle.id!, firebaseId: refuel.firebaseId);
         if (databaseRefuelList.length < 1) {
           refuelPersistence.create(refuel);
         }
       }
 
       databaseRefuelList = await refuelPersistence.getRefuels(
-          vehicleId: vehicle.id, withoutFirebaseId: true);
+          vehicleId: vehicle.id!, withoutFirebaseId: true);
 
       for (final refuel in databaseRefuelList) {
         var id = await refuelRepository.saveFirebaseRefuel(
@@ -114,7 +115,7 @@ abstract class _SynchronizationStore with Store {
       }
 
       databaseRefuelList = await refuelPersistence.getRefuels(
-          vehicleId: vehicle.id, withFirebaseId: true);
+          vehicleId: vehicle.id!, withFirebaseId: true);
 
       for (final refuel in databaseRefuelList) {
         await refuelRepository.updateFirebaseRefuel(
@@ -124,7 +125,7 @@ abstract class _SynchronizationStore with Store {
       }
 
       databaseRefuelList = await refuelPersistence.getRefuels(
-          vehicleId: vehicle.id, deleted: true);
+          vehicleId: vehicle.id!, deleted: true);
 
       for (final refuel in databaseRefuelList) {
         await refuelRepository.deleteFirebaseRefuel(

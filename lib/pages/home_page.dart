@@ -9,7 +9,7 @@ import 'package:gas_calculator/tabs/profile_tab.dart';
 import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -22,24 +22,16 @@ class _HomePageState extends State<HomePage> {
   VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   RefuelStore refuelStore = GetIt.I<RefuelStore>();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   final tabs = [HomeTab(), Center(child: Text("Charts")), ProfileTab()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Observer(
+      body: SafeArea(child:Observer(
         builder: (_) {
           return tabs[homeStore.tabIndex];
         },
-      ),
+      ),),
       bottomNavigationBar: Observer(
         builder: (_) {
           return BottomNavigationBar(

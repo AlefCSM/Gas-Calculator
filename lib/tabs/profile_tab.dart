@@ -16,8 +16,8 @@ class ProfileTab extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       child: Column(
         children: [
-          Text(loginStore.currentUser.displayName ??
-              loginStore.currentUser.email),
+          Text(
+              "${loginStore.currentUser!.displayName ?? loginStore.currentUser!.email}"),
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {

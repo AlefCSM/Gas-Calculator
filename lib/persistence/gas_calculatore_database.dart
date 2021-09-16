@@ -7,16 +7,16 @@ import 'package:path/path.dart';
 class GasCalculatorDatabase {
   static final GasCalculatorDatabase instance = GasCalculatorDatabase._init();
 
-  static Database _database;
+  static Database? _database;
 
   GasCalculatorDatabase._init();
 
   Future<Database> get database async {
-    if (_database != null && _database.isOpen) return _database;
+    if (_database != null && _database!.isOpen) return _database!;
 
     _database = await initDB('gasCalculator.db');
 
-    return _database;
+    return _database!;
   }
 
   Future<Database> initDB(String filePath) async {
