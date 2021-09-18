@@ -11,7 +11,6 @@ class RefuelFields {
   static final String fuelTypeId = 'fuelTypeId';
   static final String firebaseId = 'firebaseId';
   static final String deleted = 'deleted';
-  static final String consumption = 'consumption';
 }
 
 class Refuel {
@@ -72,25 +71,22 @@ class Refuel {
           price: double.parse('${json[RefuelFields.price]}'),
           totalCost: double.parse('${json[RefuelFields.totalCost]}'),
           litres: double.parse('${json[RefuelFields.litres]}'),
-          vehicleId: json[RefuelFields.vehicleId] as int,
+          vehicleId: firebase?0: json[RefuelFields.vehicleId] as int,
           fuelTypeId: json[RefuelFields.fuelTypeId] as int,
-          firebaseId: json[RefuelFields.firebaseId],
-          deleted: json[RefuelFields.deleted] == 1,
-          consuption:
-              firebase ? 0.0 : double.parse('${json[RefuelFields.consumption]}'),);
+          firebaseId: json[RefuelFields.firebaseId]??"",
+          deleted: json[RefuelFields.deleted] == 1);
 
-  Map<String, dynamic> toJson({bool sync = false}) {
+  Map<String, dynamic> toJson({bool firebase = false}) {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data[RefuelFields.date] = "${this.date}";
     data[RefuelFields.odometer] = this.odometer;
     data[RefuelFields.price] = this.price;
     data[RefuelFields.totalCost] = this.totalCost;
     data[RefuelFields.litres] = this.litres;
-    data[RefuelFields.vehicleId] = this.vehicleId;
     data[RefuelFields.fuelTypeId] = this.fuelTypeId;
-    if (!sync) {
+    if (!firebase) {
       data[RefuelFields.firebaseId] = this.firebaseId;
-      data[RefuelFields.consumption] = this.consuption;
+      data[RefuelFields.vehicleId] = this.vehicleId;
     }
     data[RefuelFields.deleted] = this.deleted ? 1 : 0;
     return data;

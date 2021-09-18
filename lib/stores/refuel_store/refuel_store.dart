@@ -72,7 +72,7 @@ abstract class _RefuelStore with Store {
   Refuel currentRefuel = Refuel();
 
   @observable
-   FuelType currentFuelType = FuelType(id: FuelTypes.ETHANOL.id,name: FuelTypes.ETHANOL.text);
+  FuelType currentFuelType = FuelType();
 
   @action
   setPriceInput(String value) => priceInputController.text = value;
@@ -87,10 +87,10 @@ abstract class _RefuelStore with Store {
   setCurrentRefuel(Refuel refuel) => currentRefuel = refuel;
 
   @action
-  setCurrentFuelType(FuelType fuelType) => currentFuelType = fuelType;
+  setRefuelList(List<Refuel> list) => refuelList = list;
 
   @action
-  setRefuelList(List<Refuel> list) => refuelList = list;
+  setCurrentFuelType(FuelType value) =>currentFuelType = value;
 
   @computed
   bool get fillPrice =>
@@ -110,9 +110,9 @@ abstract class _RefuelStore with Store {
   getFuelTypes() async =>
       fuelTypeList = await fuelTypePersistence.getFuelTypes();
 
-  getLastRefuel({required int vehicleId}) async {
+  getLastRefuel({required int vehicleId,int? refuelId}) async {
     lastRefuel =
-        await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId);
+        await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId,refuelId: refuelId);
   }
 
   getRefuels({required int vehicleId}) async {
@@ -156,7 +156,7 @@ abstract class _RefuelStore with Store {
   }
 
   Future<Refuel> saveRefuel() {
-    if (currentRefuel.id! > 0) {
+    if (currentRefuel.id!=null) {
       return refuelPersistence.update(currentRefuel);
     } else {
       return refuelPersistence.create(currentRefuel);

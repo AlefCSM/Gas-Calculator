@@ -172,22 +172,22 @@ mixin _$RefuelStore on _RefuelStore, Store {
   }
 
   @override
-  dynamic setCurrentFuelType(FuelType fuelType) {
+  dynamic setRefuelList(List<Refuel> list) {
     final _$actionInfo = _$_RefuelStoreActionController.startAction(
-        name: '_RefuelStore.setCurrentFuelType');
+        name: '_RefuelStore.setRefuelList');
     try {
-      return super.setCurrentFuelType(fuelType);
+      return super.setRefuelList(list);
     } finally {
       _$_RefuelStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  dynamic setRefuelList(List<Refuel> list) {
+  dynamic setCurrentFuelType(FuelType value) {
     final _$actionInfo = _$_RefuelStoreActionController.startAction(
-        name: '_RefuelStore.setRefuelList');
+        name: '_RefuelStore.setCurrentFuelType');
     try {
-      return super.setRefuelList(list);
+      return super.setCurrentFuelType(value);
     } finally {
       _$_RefuelStoreActionController.endAction(_$actionInfo);
     }

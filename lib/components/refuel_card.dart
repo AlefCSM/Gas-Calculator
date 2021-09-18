@@ -38,10 +38,10 @@ class RefuelCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("\$ ${refuel.price}"),
-                Text("${FuelType().nameFromId(refuel.fuelTypeId)} (${refuel.litres} L)")
+                Text("${FuelType().nameFromId(refuel.fuelTypeId)} ${refuel.fuelTypeId} (${refuel.litres} L)")
               ],
             ),
-            Text("${FuelType().nameFromId(refuel.fuelTypeId)} (${refuel.litres} L)")
+            Text("(${refuel.firebaseId} L)")
           ],
         ));
   }

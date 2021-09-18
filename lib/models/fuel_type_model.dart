@@ -12,8 +12,8 @@ class FuelType {
   String name;
 
   FuelType({
-    this.id = 0,
-    this.name = "",
+    this.id = 1,
+    this.name = "Ethanol",
   });
 
   static FuelType fromJson(Map<String, dynamic> json) => FuelType(

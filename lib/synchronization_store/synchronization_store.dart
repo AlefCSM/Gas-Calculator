@@ -89,7 +89,7 @@ abstract class _SynchronizationStore with Store {
 
       if(vehicle.id!=null)
       firebaseRefuelList = await refuelRepository.getFirebaseRefuels(
-          userId: userId, vehicleFirebaseId: vehicle.firebaseId);
+          userId: userId, vehicle: vehicle);
 
       for (final refuel in firebaseRefuelList) {
         databaseRefuelList = await refuelPersistence.getRefuels(

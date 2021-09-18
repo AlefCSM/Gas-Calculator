@@ -15,8 +15,9 @@ import 'package:intl/intl.dart';
 
 class RefuelPage extends StatefulWidget {
   final String label;
+  final bool edit;
 
-  RefuelPage({this.label = ""});
+  RefuelPage({this.label = "", this.edit = false});
 
   @override
   _RefuelPageState createState() => _RefuelPageState();
@@ -68,10 +69,24 @@ class _RefuelPageState extends State<RefuelPage> {
   @override
   void initState() {
     super.initState();
-    initialDate = dateFormatter.format(currentDate);
-    initialHour = hourFormatter.format(currentDate);
-    dateController.text = initialDate;
-    timeController.text = initialHour;
+    refuelStore.priceInputController.text = "${refuelStore.lastRefuel.price}";
+
+    if(widget.edit){
+      refuelStore.litresInputController.text = "${refuelStore.lastRefuel.litres}";
+      refuelStore.totalInputController.text = "${refuelStore.lastRefuel.totalCost}";
+    }else{
+      initialDate = dateFormatter.format(currentDate);
+      initialHour = hourFormatter.format(currentDate);
+      dateController.text = initialDate;
+      timeController.text = initialHour;
+    }
+
+
+    var fuelTypeId = widget.edit
+        ? refuelStore.currentRefuel.fuelTypeId
+        : vehicleStore.selectedVehicle.fuelTypeId;
+    refuelStore.setCurrentFuelType(refuelStore.fuelTypeList
+        .firstWhere((element) => element.id == fuelTypeId));
   }
 
   @override
@@ -184,7 +199,8 @@ class _RefuelPageState extends State<RefuelPage> {
                   children: [
                     CustomTextFormField(
                       hint: "Odometer(km)",
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.number,
+                      initialValue: "${refuelStore.currentRefuel.odometer}",
                       inputFormatters: [
                         CurrencyTextInputFormatter(decimalDigits: 2, symbol: "")
                       ],
@@ -198,7 +214,7 @@ class _RefuelPageState extends State<RefuelPage> {
                         if (value.isEmpty) {
                           return "Fill this field";
                         }
-                        if (refuelStore.lastRefuel.id!=null) {
+                        if (refuelStore.lastRefuel.id != null) {
                           if (double.parse(value) <=
                               refuelStore.lastRefuel.odometer) {
                             return "Odometer should be bigger than last refuel";
@@ -207,7 +223,7 @@ class _RefuelPageState extends State<RefuelPage> {
                       },
                     ),
                     Visibility(
-                        visible: refuelStore.lastRefuel.id!=null,
+                        visible: refuelStore.lastRefuel.id != null,
                         child: Text(
                             "Last odometer: ${refuelStore.lastRefuel.odometer}"))
                   ],
@@ -223,10 +239,13 @@ class _RefuelPageState extends State<RefuelPage> {
                       dropdownMenuItemList: refuelStore.fuelTypeDrodownList,
                       onChanged: (FuelType? value) {
                         if (value != null) {
+                          refuelStore.setCurrentFuelType(value);
                           refuelStore.currentRefuel.fuelTypeId = value.id;
                           refuelStore
                               .setCurrentRefuel(refuelStore.currentRefuel);
-                          refuelStore.setCurrentFuelType(value);
+                          vehicleStore.selectedVehicle.fuelTypeId = value.id;
+                          vehicleStore
+                              .setSelectedVehicle(vehicleStore.selectedVehicle);
                         }
                       },
                       isEnabled: true,
@@ -353,6 +372,8 @@ class _RefuelPageState extends State<RefuelPage> {
                       if (refuel.id == null) {
                         //exibe mensagem de erro
                       } else {
+                        // refuelStore.setCurrent
+
                         refuelStore.getRefuels(
                             vehicleId: vehicleStore.selectedVehicle.id!);
                         Navigator.of(context).pop();

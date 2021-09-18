@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:647493797055:android:c3b26ffb0453b961d8320a",
+        "mobilesdk_app_id": "1:647493797055:android:f4fd14be40a82608d8320a",
         "android_client_info": {
-          "package_name": "com.alefcsm.gascalculator"
+          "package_name": "com.alefcsm.gas_calculator"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "647493797055-d7qqf1v2f7a0f6bqp2scqu2rpljlshqr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.alefcsm.gascalculator",
-            "certificate_hash": "28510606e41d44846b7c610bd820019ed0eb1085"
-          }
-        },
         {
           "client_id": "647493797055-cddqsd0dt3tm4av6od4hrt6tcchd89c7.apps.googleusercontent.com",
           "client_type": 3
@@ -37,6 +29,13 @@
             {
               "client_id": "647493797055-cddqsd0dt3tm4av6od4hrt6tcchd89c7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "647493797055-nvfnp19gtsfu58qbkne18jntu5pgd8po.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.alefcsm.gasCalculator"
+              }
             }
           ]
         }

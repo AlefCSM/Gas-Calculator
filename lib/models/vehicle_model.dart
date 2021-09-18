@@ -7,6 +7,7 @@ class VehicleFields {
   static final String name = 'name';
   static final String firebaseId = 'firebaseId';
   static final String fuelCapacity = 'fuelCapacity';
+  static final String fuelTypeId = 'fuelTypeId';
   static final String selected = 'selected';
   static final String deleted = 'deleted';
 }
@@ -16,6 +17,7 @@ class Vehicle {
   String name;
   String firebaseId;
   double fuelCapacity;
+  int fuelTypeId;
   bool selected;
   bool deleted;
 
@@ -33,6 +35,7 @@ class Vehicle {
     this.fuelCapacity = 0.0,
     this.selected = false,
     this.deleted = false,
+    this.fuelTypeId = 1,
   });
 
   Vehicle copy({
@@ -40,6 +43,7 @@ class Vehicle {
     String? name,
     String? firebaseId,
     double? fuelCapacity,
+    int? fuelTypeId,
     bool? selected,
     bool? deleted,
   }) =>
@@ -48,6 +52,7 @@ class Vehicle {
         name: name ?? this.name,
         firebaseId: firebaseId ?? this.firebaseId,
         fuelCapacity: fuelCapacity ?? this.fuelCapacity,
+        fuelTypeId: fuelTypeId ?? this.fuelTypeId,
         selected: selected ?? this.selected,
         deleted: deleted ?? this.deleted,
       );
@@ -58,6 +63,7 @@ class Vehicle {
           name: json[VehicleFields.name],
           firebaseId: json[VehicleFields.firebaseId]??"",
           fuelCapacity: double.parse('${json[VehicleFields.fuelCapacity]}'),
+          fuelTypeId: int.parse('${json[VehicleFields.fuelTypeId]}'),
           selected: firebase ? false : json[VehicleFields.selected] == 1,
           deleted: json[VehicleFields.deleted] == 1);
 
@@ -65,6 +71,7 @@ class Vehicle {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data[VehicleFields.name] = this.name;
     data[VehicleFields.fuelCapacity] = this.fuelCapacity;
+    data[VehicleFields.fuelTypeId] = this.fuelTypeId;
     data[VehicleFields.deleted] = this.deleted ? 1 : 0;
     if (!firebase) {
       data[VehicleFields.firebaseId] = this.firebaseId;

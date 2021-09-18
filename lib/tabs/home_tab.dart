@@ -5,6 +5,7 @@ import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/refuel_card.dart';
+import 'package:gas_calculator/models/refuel_model.dart';
 import 'package:gas_calculator/models/vehicle_model.dart';
 import 'package:gas_calculator/pages/refuel_page.dart';
 import 'package:gas_calculator/pages/vehicle_page.dart';
@@ -28,9 +29,10 @@ class _HomeTabState extends State<HomeTab> {
   final SynchronizationStore synchronizationStore =
       GetIt.I<SynchronizationStore>();
 
-  Future<void> initRefuelVariables() async {
+  Future<void> initRefuelVariables({int? refuelId}) async {
     if (vehicleStore.selectedVehicle.id != null) {
-      refuelStore.getLastRefuel(vehicleId: vehicleStore.selectedVehicle.id!);
+      await refuelStore.getLastRefuel(
+          vehicleId: vehicleStore.selectedVehicle.id!, refuelId: refuelId);
     }
     if (refuelStore.fuelTypeList.length == 0) {
       await refuelStore.getFuelTypes();
@@ -38,6 +40,31 @@ class _HomeTabState extends State<HomeTab> {
     if (refuelStore.fuelTypeDrodownList.length == 0) {
       refuelStore.buildFuelTypeList();
     }
+
+    refuelStore.priceInputController.text = "";
+    refuelStore.litresInputController.text = "";
+    refuelStore.totalInputController.text = "";
+  }
+
+  refreshHomeTab() async {
+    await synchronizationStore.sync();
+
+    await vehicleStore.getVehicles();
+    if (vehicleStore.vehiclesList.isNotEmpty &&
+        vehicleStore.selectedVehicle.id == null) {
+      vehicleStore.setSelectedVehicle(vehicleStore.vehiclesList[0]);
+    }
+    if (vehicleStore.selectedVehicle.id != null) {
+      await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
+
+      if (refuelStore.refuelList.isNotEmpty) {
+        var vehicle = vehicleStore.selectedVehicle;
+        vehicle.fuelTypeId = refuelStore.refuelList.last.fuelTypeId;
+        vehicleStore.setSelectedVehicle(vehicle);
+      }
+    }
+
+    vehicleStore.buildDropdownList();
   }
 
   Future<void> initHomeVariables() async {
@@ -48,15 +75,8 @@ class _HomeTabState extends State<HomeTab> {
     if (vehicleStore.selectedVehicle.id != null) {
       await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
     }
-    await synchronizationStore.sync().then((value) async {
-      await vehicleStore.getVehicles();
 
-      if (vehicleStore.vehiclesList.isNotEmpty &&
-          vehicleStore.selectedVehicle.id == null) {
-        vehicleStore.setSelectedVehicle(vehicleStore.vehiclesList[0]);
-      }
-      vehicleStore.buildDropdownList();
-    });
+    await refreshHomeTab();
   }
 
   @override
@@ -68,10 +88,14 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+        body: Column(children: [
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+        ),
+        margin: EdgeInsets.only(top: 32),
+        child: Column(
           children: [
             Observer(
               builder: (_) {
@@ -83,24 +107,26 @@ class _HomeTabState extends State<HomeTab> {
                       Text("Selected vehicle"),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 10),
-                        child: CustomDropdown(
-                          value: vehicleStore.selectedVehicle.id != null
-                              ? vehicleStore.selectedVehicle
-                              : vehicleStore.vehiclesList.length > 0
-                                  ? vehicleStore.vehiclesList[0]
-                                  : Vehicle(),
-                          dropdownMenuItemList:
-                              vehicleStore.vehiclesDrodownList,
-                          onChanged: (Vehicle? vehicle) async {
-                            if (vehicle != null) {
-                              await vehicleStore
-                                  .updateSelectedVehicle(vehicle.id!);
-                              refuelStore.getRefuels(
-                                  vehicleId: vehicleStore.selectedVehicle.id!);
-                            }
-                          },
-                          isEnabled: true,
-                        ),
+                        child: Observer(
+                            builder: (_) => CustomDropdown(
+                                  value: vehicleStore.selectedVehicle.id != null
+                                      ? vehicleStore.selectedVehicle
+                                      : vehicleStore.vehiclesList.length > 0
+                                          ? vehicleStore.vehiclesList[0]
+                                          : Vehicle(),
+                                  dropdownMenuItemList:
+                                      vehicleStore.vehiclesDrodownList,
+                                  onChanged: (Vehicle? vehicle) async {
+                                    if (vehicle != null) {
+                                      await vehicleStore
+                                          .updateSelectedVehicle(vehicle.id!);
+                                      refuelStore.getRefuels(
+                                          vehicleId:
+                                              vehicleStore.selectedVehicle.id!);
+                                    }
+                                  },
+                                  isEnabled: true,
+                                )),
                       )
                     ],
                   ),
@@ -118,32 +144,47 @@ class _HomeTabState extends State<HomeTab> {
                     await initRefuelVariables();
 
                     if (vehicleStore.hasVehicleSelected) {
-                      refuelStore.setCurrentFuelType(refuelStore.fuelTypeList[0]);
+                      refuelStore.setCurrentRefuel(Refuel());
                       homeStore.navigateToPage(
                           context: context,
                           page: RefuelPage(
                             label: "New refuel",
-                          ));
+                          ),
+                          callback: () => refreshHomeTab());
                     } else {
                       vehicleStore.setCurrentVehicle(Vehicle());
                       homeStore.navigateToPage(
                           context: context,
-                          page: VehiclePage(label: "New vehicle"));
+                          page: VehiclePage(label: "New vehicle"),
+                          callback: () => refreshHomeTab());
                     }
                   }),
             ),
-            Observer(
-                builder: (_) => ListView.builder(
-                    reverse: true,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: refuelStore.refuelList.length,
-                    itemBuilder: (context, index) {
-                      return Row(
+          ],
+        ),
+      ),
+      Divider(
+        thickness: 1,
+        height: 1,
+      ),
+      Flexible(
+          child: SingleChildScrollView(
+        child: Observer(
+            builder: (_) => ListView.builder(
+                reverse: true,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: refuelStore.refuelList.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      child: Row(
                         children: [
                           Stack(children: [
                             Container(
-                              margin: EdgeInsets.only(left: 20, right: 20),
+                              margin: EdgeInsets.only(left: 9, right: 20),
                               width: 10,
                               height: 100,
                               color: kBlack,
@@ -166,7 +207,7 @@ class _HomeTabState extends State<HomeTab> {
                             Align(
                               heightFactor: 3,
                               child: Container(
-                                margin: EdgeInsets.only(left: 9),
+                                // margin: EdgeInsets.only(left: 9),
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
@@ -183,14 +224,29 @@ class _HomeTabState extends State<HomeTab> {
                             )
                           ]),
                           Expanded(
-                              child: RefuelCard(
-                                  refuel: refuelStore.refuelList[index]))
+                              child: GestureDetector(
+                                  onTap: () async {
+                                    await initRefuelVariables(
+                                        refuelId:
+                                            refuelStore.refuelList[index].id);
+
+                                    refuelStore.setCurrentRefuel(
+                                        refuelStore.refuelList[index]);
+
+                                    homeStore.navigateToPage(
+                                        context: context,
+                                        page: RefuelPage(
+                                          label: "Edit refuel",
+                                          edit: true,
+                                        ),
+                                        callback: () => refreshHomeTab());
+                                  },
+                                  child: RefuelCard(
+                                      refuel: refuelStore.refuelList[index])))
                         ],
-                      );
-                    }))
-          ],
-        ),
-      ),
-    );
+                      ));
+                })),
+      ))
+    ]));
   }
 }

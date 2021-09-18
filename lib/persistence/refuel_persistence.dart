@@ -69,15 +69,15 @@ class RefuelPersistence {
   }
 
   Future<Refuel> getPreviousRefuel(
-      {required int vehicleId, int refuelId = 0}) async {
+      {required int vehicleId, int? refuelId}) async {
     final db = await GasCalculatorDatabase.instance.database;
 
     String where =
         '${RefuelFields.vehicleId} = ? AND ${RefuelFields.deleted} = ?';
     List whereArgsList = [vehicleId, 0];
 
-    if (refuelId > 0) {
-      where = ' AND ${RefuelFields.id} = ?';
+    if (refuelId !=null) {
+      where += ' AND ${RefuelFields.id} = ?';
       whereArgsList.add(refuelId - 1);
     }
 

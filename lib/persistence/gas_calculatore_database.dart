@@ -46,6 +46,7 @@ class GasCalculatorDatabase {
       ${VehicleFields.firebaseId} $textType,
       ${VehicleFields.name} $textTypeNotNull,
       ${VehicleFields.fuelCapacity} $numberType,
+      ${VehicleFields.fuelTypeId} $integerTypeNotNull,
       ${VehicleFields.selected} $integerTypeNotNull,
       ${VehicleFields.deleted} $integerTypeNotNull
     ); ''');
