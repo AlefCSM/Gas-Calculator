@@ -49,8 +49,8 @@ abstract class _SynchronizationStore with Store {
         await vehicleRepository.getFirebaseVehicles(userId: userId);
 
     for (final vehicle in firebaseVehicleList) {
-      databaseVehicleList =
-          await vehiclePersistence.getVehicles(firebaseId: vehicle.firebaseId,filterDeleted: false);
+      databaseVehicleList = await vehiclePersistence.getVehicles(
+          firebaseId: vehicle.firebaseId, filterDeleted: false);
       if (databaseVehicleList.length < 1) {
         vehiclePersistence.create(vehicle);
       }
@@ -77,19 +77,19 @@ abstract class _SynchronizationStore with Store {
 
     databaseVehicleList = await vehiclePersistence.getVehicles(deleted: true);
     for (final vehicle in databaseVehicleList) {
+      await refuelPersistence.deleteRefuelsFromVehicle(vehicle.id!);
       await vehicleRepository.deleteFirebaseVehicle(
           userId: userId, vehicle: vehicle);
     }
   }
 
   Future<void> syncRefuels(String userId) async {
-    databaseVehicleList = await vehiclePersistence.getVehicles();
+    databaseVehicleList = await vehiclePersistence.getVehicles(filterDeleted: false);
 
     for (final vehicle in databaseVehicleList) {
-
-      if(vehicle.id!=null)
-      firebaseRefuelList = await refuelRepository.getFirebaseRefuels(
-          userId: userId, vehicle: vehicle);
+      if (vehicle.id != null)
+        firebaseRefuelList = await refuelRepository.getFirebaseRefuels(
+            userId: userId, vehicle: vehicle);
 
       for (final refuel in firebaseRefuelList) {
         databaseRefuelList = await refuelPersistence.getRefuels(
@@ -108,7 +108,6 @@ abstract class _SynchronizationStore with Store {
             vehicleFirebaseId: vehicle.firebaseId,
             refuel: refuel);
 
-        print(id);
         refuel.firebaseId = id;
 
         await refuelPersistence.update(refuel);

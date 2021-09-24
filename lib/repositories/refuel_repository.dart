@@ -10,10 +10,10 @@ class RefuelRepository {
   static const REFUELS_COLLECTION = "refuels";
 
   void setReference(String userId) {
-      vehiclesReference = FirebaseFirestore.instance
-          .collection(USERS_COLLECTION)
-          .doc(userId)
-          .collection(VEHICLES_COLLECTION);
+    vehiclesReference = FirebaseFirestore.instance
+        .collection(USERS_COLLECTION)
+        .doc(userId)
+        .collection(VEHICLES_COLLECTION);
   }
 
   Future<List<Refuel>> getFirebaseRefuels(
@@ -22,8 +22,11 @@ class RefuelRepository {
 
     setReference(userId);
 
-    QuerySnapshot snapshot =
-        await vehiclesReference.doc(vehicle.firebaseId).collection(REFUELS_COLLECTION).get();
+    QuerySnapshot snapshot = await vehiclesReference
+        .doc(vehicle.firebaseId)
+        .collection(REFUELS_COLLECTION)
+        .orderBy("odometer")
+        .get();
 
     snapshot.docs.forEach((firebaseRefuel) {
       var json = firebaseRefuel.data() as Map<String, dynamic>;

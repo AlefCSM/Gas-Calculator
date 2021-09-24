@@ -29,10 +29,10 @@ class _HomeTabState extends State<HomeTab> {
   final SynchronizationStore synchronizationStore =
       GetIt.I<SynchronizationStore>();
 
-  Future<void> initRefuelVariables({int? refuelId}) async {
+  Future<void> initRefuelVariables({double? odometer}) async {
     if (vehicleStore.selectedVehicle.id != null) {
       await refuelStore.getLastRefuel(
-          vehicleId: vehicleStore.selectedVehicle.id!, refuelId: refuelId);
+          vehicleId: vehicleStore.selectedVehicle.id!, odometer: odometer);
     }
     if (refuelStore.fuelTypeList.length == 0) {
       await refuelStore.getFuelTypes();
@@ -59,7 +59,7 @@ class _HomeTabState extends State<HomeTab> {
 
       if (refuelStore.refuelList.isNotEmpty) {
         var vehicle = vehicleStore.selectedVehicle;
-        vehicle.fuelTypeId = refuelStore.refuelList.last.fuelTypeId;
+        vehicle.fuelTypeId = refuelStore.refuelList.last.fuelTypeId>0?refuelStore.refuelList.last.fuelTypeId:1;
         vehicleStore.setSelectedVehicle(vehicle);
       }
     }
@@ -176,6 +176,7 @@ class _HomeTabState extends State<HomeTab> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: refuelStore.refuelList.length,
                 itemBuilder: (context, index) {
+                  var refuel = refuelStore.refuelList[index];
                   return Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
@@ -225,13 +226,14 @@ class _HomeTabState extends State<HomeTab> {
                           ]),
                           Expanded(
                               child: GestureDetector(
+                                  onLongPress: () async {
+                                    await refuelStore.deleteRefuel(refuel.id!);
+                                  },
                                   onTap: () async {
                                     await initRefuelVariables(
-                                        refuelId:
-                                            refuelStore.refuelList[index].id);
+                                        odometer: refuel.odometer);
 
-                                    refuelStore.setCurrentRefuel(
-                                        refuelStore.refuelList[index]);
+                                    refuelStore.setCurrentRefuel(refuel);
 
                                     homeStore.navigateToPage(
                                         context: context,

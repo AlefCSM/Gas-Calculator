@@ -31,6 +31,7 @@ class GasCalculatorDatabase {
     final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final textType = 'TEXT';
     final textTypeNotNull = 'TEXT NOT NULL';
+    final datetimeTypeNotNull = 'DATETIME NOT NULL';
     final integerType = 'INTEGER';
     final integerTypeNotNull = 'INTEGER NOT NULL';
     final numberType = 'NUMBER NOT NULL';
@@ -53,7 +54,7 @@ class GasCalculatorDatabase {
     await db.execute('''    
     CREATE TABLE $tableRefuels (
       ${RefuelFields.id} $idType,
-      ${RefuelFields.date} $textTypeNotNull,
+      ${RefuelFields.date} $datetimeTypeNotNull,
       ${RefuelFields.odometer} $numberType,
       ${RefuelFields.price} $numberType,
       ${RefuelFields.totalCost} $numberType,

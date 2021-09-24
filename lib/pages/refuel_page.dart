@@ -69,24 +69,30 @@ class _RefuelPageState extends State<RefuelPage> {
   @override
   void initState() {
     super.initState();
-    refuelStore.priceInputController.text = "${refuelStore.lastRefuel.price}";
 
-    if(widget.edit){
-      refuelStore.litresInputController.text = "${refuelStore.lastRefuel.litres}";
-      refuelStore.totalInputController.text = "${refuelStore.lastRefuel.totalCost}";
-    }else{
-      initialDate = dateFormatter.format(currentDate);
-      initialHour = hourFormatter.format(currentDate);
-      dateController.text = initialDate;
-      timeController.text = initialHour;
+    if (widget.edit) {
+      refuelStore.litresInputController.text =
+          "${refuelStore.currentRefuel.litres}";
+      refuelStore.totalInputController.text =
+          "${refuelStore.currentRefuel.totalCost}";
+      refuelStore.priceInputController.text = "${refuelStore.currentRefuel.price}";
+      var date =
+          DateFormat("dd/MM/yyyy hh:mm").parse(refuelStore.currentRefuel.date);
+
+      dateController.text = dateFormatter.format(date);
+      timeController.text = hourFormatter.format(date);
+    } else {
+      refuelStore.priceInputController.text = "${refuelStore.lastRefuel.price}";
+      dateController.text = dateFormatter.format(currentDate);
+      timeController.text = hourFormatter.format(currentDate);
     }
-
 
     var fuelTypeId = widget.edit
         ? refuelStore.currentRefuel.fuelTypeId
         : vehicleStore.selectedVehicle.fuelTypeId;
     refuelStore.setCurrentFuelType(refuelStore.fuelTypeList
         .firstWhere((element) => element.id == fuelTypeId));
+    refuelStore.currentRefuel.fuelTypeId = refuelStore.currentFuelType.id;
   }
 
   @override
@@ -378,6 +384,21 @@ class _RefuelPageState extends State<RefuelPage> {
                             vehicleId: vehicleStore.selectedVehicle.id!);
                         Navigator.of(context).pop();
                       }
+                    }
+                  },
+                ),
+              ),
+              Visibility(
+                visible: widget.edit,
+                child: SubmitButton(
+                  text: "Delete",
+                  onPressed: () async {
+
+                    var success = await refuelStore.deleteRefuel(refuelStore.currentRefuel.id!);
+                    if(success){
+                      refuelStore.getRefuels(
+                          vehicleId: vehicleStore.selectedVehicle.id!);
+                      Navigator.of(context).pop();
                     }
                   },
                 ),

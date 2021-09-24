@@ -110,9 +110,9 @@ abstract class _RefuelStore with Store {
   getFuelTypes() async =>
       fuelTypeList = await fuelTypePersistence.getFuelTypes();
 
-  getLastRefuel({required int vehicleId,int? refuelId}) async {
+  getLastRefuel({required int vehicleId,double? odometer}) async {
     lastRefuel =
-        await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId,refuelId: refuelId);
+        await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId,odometer: odometer);
   }
 
   getRefuels({required int vehicleId}) async {
@@ -165,7 +165,12 @@ abstract class _RefuelStore with Store {
 
   Future<bool> deleteRefuelsFromVehicle(int vehicleId) async {
     var result = await refuelPersistence.deleteRefuelsFromVehicle(vehicleId);
-    print(result);
+
+    return result;
+  }
+
+  Future<bool> deleteRefuel(int refuelId) async {
+    var result = await refuelPersistence.deleteRefuel(refuelId);
 
     return result;
   }

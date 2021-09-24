@@ -7,7 +7,7 @@ class VehiclePersistence {
 
     final id = await db.insert(tableVehicles, vehicle.toJson());
 
-    await db.close();
+    //await db.close();
     return vehicle.copy(id: id);
   }
 
@@ -17,7 +17,7 @@ class VehiclePersistence {
     final id = await db.update(tableVehicles, vehicle.toJson(),
         where: "${VehicleFields.id} = ?", whereArgs: [vehicle.id]);
 
-    await db.close();
+    //await db.close();
     return id;
   }
 
@@ -53,7 +53,7 @@ class VehiclePersistence {
     final queryResult =
         await db.query(tableVehicles, where: where, whereArgs: whereArgs);
 
-    await db.close();
+    //await db.close();
     if (queryResult.isNotEmpty) {
       return queryResult
           .map((Map<String, dynamic> json) => Vehicle.fromJson(json))
@@ -70,7 +70,7 @@ class VehiclePersistence {
         where: '${VehicleFields.selected} = ? AND ${VehicleFields.deleted} = ?',
         whereArgs: [1, 0]);
 
-    await db.close();
+    //await db.close();
     if (queryResult.isNotEmpty) {
       return Vehicle.fromJson(queryResult.first);
     } else {
@@ -90,7 +90,7 @@ class VehiclePersistence {
     await db.update(tableVehicles, values,
         where: "${VehicleFields.id} = ?", whereArgs: [vehicleId]);
 
-    await db.close();
+    //await db.close();
     // return id;
   }
 
@@ -102,7 +102,7 @@ class VehiclePersistence {
         where: '${VehicleFields.deleted} = ? AND ${VehicleFields.id} = ?',
         whereArgs: [0, vehicle.id]);
 
-    await db.close();
+    //await db.close();
     return deletedRows;
   }
 
@@ -112,7 +112,7 @@ class VehiclePersistence {
     final deletedRows = await db.delete(tableVehicles,
         where: '${VehicleFields.deleted} = ?', whereArgs: [1]);
 
-    await db.close();
+    //await db.close();
     return deletedRows;
   }
 }
