@@ -3,9 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/models/fuel_type_model.dart';
 import 'package:gas_calculator/models/refuel_model.dart';
+import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
+import 'package:get_it/get_it.dart';
 
 class RefuelCard extends StatelessWidget {
   final Refuel refuel;
+  final RefuelStore refuelStore = GetIt.I<RefuelStore>();
 
   RefuelCard({required this.refuel});
 
@@ -29,6 +32,7 @@ class RefuelCard extends StatelessWidget {
           ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,10 +42,11 @@ class RefuelCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("\$ ${refuel.price}"),
-                Text("${FuelType().nameFromId(refuel.fuelTypeId)} ${refuel.fuelTypeId} (${refuel.litres} L)")
+                Text(
+                    "${FuelType().nameFromId(refuel.fuelTypeId)} (${refuel.litres} L)")
               ],
             ),
-            Text("(${refuel.firebaseId} L)")
+            Text("${refuel.consuption} km/L")
           ],
         ));
   }

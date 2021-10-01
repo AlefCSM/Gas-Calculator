@@ -51,8 +51,8 @@ abstract class _RefuelStore with Store {
   List<FuelType> fuelTypeList = [];
   List<DropdownMenuItem<FuelType>> fuelTypeDrodownList = [];
 
-  String date="";
-  String time="";
+  String date = "";
+  String time = "";
 
   Refuel lastRefuel = Refuel();
 
@@ -90,7 +90,7 @@ abstract class _RefuelStore with Store {
   setRefuelList(List<Refuel> list) => refuelList = list;
 
   @action
-  setCurrentFuelType(FuelType value) =>currentFuelType = value;
+  setCurrentFuelType(FuelType value) => currentFuelType = value;
 
   @computed
   bool get fillPrice =>
@@ -110,14 +110,20 @@ abstract class _RefuelStore with Store {
   getFuelTypes() async =>
       fuelTypeList = await fuelTypePersistence.getFuelTypes();
 
-  getLastRefuel({required int vehicleId,double? odometer}) async {
-    lastRefuel =
-        await refuelPersistence.getPreviousRefuel(vehicleId: vehicleId,odometer: odometer);
+  getLastRefuel({required int vehicleId, double? odometer}) async {
+    lastRefuel = await refuelPersistence.getPreviousRefuel(
+        vehicleId: vehicleId, odometer: odometer);
   }
 
   getRefuels({required int vehicleId}) async {
     if (vehicleId > 0) {
-      setRefuelList(await refuelPersistence.getRefuels(vehicleId: vehicleId));
+      var refuels = await refuelPersistence.getRefuels(vehicleId: vehicleId);
+
+      for (int i = 0; i < refuels.length; i++) {
+        refuels[i].consuption = getConsumption(i, refuels);
+      }
+
+      setRefuelList(refuels);
     }
   }
 
@@ -156,7 +162,7 @@ abstract class _RefuelStore with Store {
   }
 
   Future<Refuel> saveRefuel() {
-    if (currentRefuel.id!=null) {
+    if (currentRefuel.id != null) {
       return refuelPersistence.update(currentRefuel);
     } else {
       return refuelPersistence.create(currentRefuel);
@@ -173,5 +179,16 @@ abstract class _RefuelStore with Store {
     var result = await refuelPersistence.deleteRefuel(refuelId);
 
     return result;
+  }
+
+  double getConsumption(int index, List refuels) {
+    if ((index + 1) == refuels.length) return 0.0;
+
+    Refuel currentRefuel = refuels[index + 1];
+    Refuel lastRefuel = refuels[index];
+
+    var kilometers = currentRefuel.odometer - lastRefuel.odometer;
+
+    return kilometers / currentRefuel.litres;
   }
 }

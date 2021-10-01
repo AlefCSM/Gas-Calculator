@@ -6,6 +6,7 @@ import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:gas_calculator/tabs/home_tab.dart';
 import 'package:gas_calculator/tabs/profile_tab.dart';
+import 'package:gas_calculator/tabs/reports_tab.dart';
 import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   RefuelStore refuelStore = GetIt.I<RefuelStore>();
 
-  final tabs = [HomeTab(), Center(child: Text("Charts")), ProfileTab()];
+  final tabs = [HomeTab(), ReportsTab(), ProfileTab()];
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.bar_chart_rounded),
-                label: "Charts",
+                label: "Reports",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

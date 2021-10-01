@@ -20,3 +20,5 @@ const kBackgroundLight = Color(0xFFC5C5C5);
 const kTransparentColor = Colors.transparent;
 const kYellowColor = Color(0xFFFACD3B);
 const kGreenColor = Color(0xFF4DC700);
+const kDarkGreenColor = Color(0xFF16A84E);
+const kDarkerGreenColor = Color(0xFF005C23);

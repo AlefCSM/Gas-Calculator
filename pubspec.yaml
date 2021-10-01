@@ -65,6 +65,11 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/images/google_logo.svg
+    - lib/assets/images/ethanol.png
+    - lib/assets/images/diesel.png
+    - lib/assets/images/gasoline.png
+  # colar o link abaixo na loja
+  #<div>Icons made by <a href="https://www.flaticon.com/authors/monkik" title="monkik">monkik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

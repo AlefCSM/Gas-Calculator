@@ -12,6 +12,7 @@ import 'package:gas_calculator/pages/vehicle_page.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
+import 'package:gas_calculator/stores/report_store/report_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:gas_calculator/synchronization_store/synchronization_store.dart';
 import 'package:get_it/get_it.dart';
@@ -26,6 +27,7 @@ class _HomeTabState extends State<HomeTab> {
   final RefuelStore refuelStore = GetIt.I<RefuelStore>();
   final LoginStore loginStore = GetIt.I<LoginStore>();
   final VehicleStore vehicleStore = GetIt.I<VehicleStore>();
+  final ReportStore reportStore = GetIt.I<ReportStore>();
   final SynchronizationStore synchronizationStore =
       GetIt.I<SynchronizationStore>();
 
@@ -59,7 +61,9 @@ class _HomeTabState extends State<HomeTab> {
 
       if (refuelStore.refuelList.isNotEmpty) {
         var vehicle = vehicleStore.selectedVehicle;
-        vehicle.fuelTypeId = refuelStore.refuelList.last.fuelTypeId>0?refuelStore.refuelList.last.fuelTypeId:1;
+        vehicle.fuelTypeId = refuelStore.refuelList.last.fuelTypeId > 0
+            ? refuelStore.refuelList.last.fuelTypeId
+            : 1;
         vehicleStore.setSelectedVehicle(vehicle);
       }
     }
@@ -74,6 +78,10 @@ class _HomeTabState extends State<HomeTab> {
     await vehicleStore.getSelectedVehicle();
     if (vehicleStore.selectedVehicle.id != null) {
       await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
+    }
+
+    if (refuelStore.fuelTypeList.length == 0) {
+      await refuelStore.getFuelTypes();
     }
 
     await refreshHomeTab();
@@ -244,7 +252,8 @@ class _HomeTabState extends State<HomeTab> {
                                         callback: () => refreshHomeTab());
                                   },
                                   child: RefuelCard(
-                                      refuel: refuelStore.refuelList[index])))
+                                    refuel: refuelStore.refuelList[index]
+                                  )))
                         ],
                       ));
                 })),

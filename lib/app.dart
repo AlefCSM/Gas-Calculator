@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/pages/home_page.dart';
 import 'package:gas_calculator/pages/login_page.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
+import 'package:gas_calculator/stores/report_store/report_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:gas_calculator/synchronization_store/synchronization_store.dart';
 import 'package:get_it/get_it.dart';
@@ -21,6 +23,7 @@ void getItLocators() {
   GetIt.I.registerSingleton(HomeStore());
   GetIt.I.registerSingleton(VehicleStore());
   GetIt.I.registerSingleton(RefuelStore());
+  GetIt.I.registerSingleton(ReportStore());
   GetIt.I.registerSingleton(SynchronizationStore());
 }
 
@@ -77,6 +80,7 @@ class GasCalculator extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: kBackgroundGrey
       ),
       home:   loginStore.currentUser!=null ?HomePage(title: "Gas Calculator",):LoginPage(),
     );

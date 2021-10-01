@@ -18,9 +18,7 @@ class ScreenUtil {
     return !(MediaQuery.of(context).viewInsets.bottom == 0.0);
   }
 
-  String capitalize(String text) {
-    return "${text[0].toUpperCase()}${text.substring(1)}";
-  }
+
 
   MediaQueryData mediaQueryTextFactor(
       BuildContext context, double defaultTextFactor) {
