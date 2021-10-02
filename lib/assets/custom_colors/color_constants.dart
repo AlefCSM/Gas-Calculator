@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const kAccentColor = Color(0xFF05A89B);
+const kDarkBlueColor = Color(0xFF3E8CC7);
 const kDarkerRedColor = Color(0xFFA81D16);
 const kDarkRedColor = Color(0xFFBF3726);
 const kRedColor = Color(0xFFF44237);

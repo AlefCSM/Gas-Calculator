@@ -87,6 +87,19 @@ class _HomeTabState extends State<HomeTab> {
     await refreshHomeTab();
   }
 
+  Color getColor(int index) {
+    var fuelTypeId = refuelStore.refuelList[index].fuelTypeId;
+
+    switch (fuelTypeId) {
+      case 2:
+        return kDarkBlueColor;
+      case 3:
+        return kRedColor;
+      default:
+        return kGreenColor;
+    }
+  }
+
   @override
   void initState() {
     initHomeVariables();
@@ -144,7 +157,7 @@ class _HomeTabState extends State<HomeTab> {
             ),
             Container(
               margin: EdgeInsets.only(
-                bottom: 10,
+                bottom: 20,
               ),
               child: SubmitButton(
                   text: "Add new Refuel",
@@ -220,7 +233,7 @@ class _HomeTabState extends State<HomeTab> {
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
-                                  color: kGreenColor,
+                                  color: getColor(index),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(15),
                                   ),
@@ -252,8 +265,7 @@ class _HomeTabState extends State<HomeTab> {
                                         callback: () => refreshHomeTab());
                                   },
                                   child: RefuelCard(
-                                    refuel: refuelStore.refuelList[index]
-                                  )))
+                                      refuel: refuelStore.refuelList[index])))
                         ],
                       ));
                 })),

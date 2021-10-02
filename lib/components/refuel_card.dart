@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
+import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/models/fuel_type_model.dart';
 import 'package:gas_calculator/models/refuel_model.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
@@ -36,17 +37,33 @@ class RefuelCard extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("${refuel.odometer} km"), Text("${refuel.date}")],
+              children: [Text("${refuel.odometer} km",
+                  style: TextStyle(
+                      color: kDarkGrey,
+                      fontSize: CustomFontSize.large,
+                      fontWeight: FontWeight.bold)), Text("${refuel.date}",
+                  style: TextStyle(
+                      color: kLightGrey,
+                      fontSize: CustomFontSize.small))],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("\$ ${refuel.price}"),
+                Text("\$ ${refuel.price}",
+                    style: TextStyle(
+                        color: kDarkGrey,
+                        fontWeight: FontWeight.w500)),
                 Text(
-                    "${FuelType().nameFromId(refuel.fuelTypeId)} (${refuel.litres} L)")
+                    "${FuelType().nameFromId(refuel.fuelTypeId)} (${refuel.litres} L)",
+                    style: TextStyle(
+                        color: kDarkGrey,
+                        fontWeight: FontWeight.w500))
               ],
             ),
-            Text("${refuel.consuption} km/L")
+            Text("${refuel.consuption.toStringAsFixed(2)} km/L",
+                style: TextStyle(
+                    color: kDarkGrey,
+                    fontWeight: FontWeight.w500))
           ],
         ));
   }
