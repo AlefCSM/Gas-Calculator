@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
+import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
@@ -18,10 +19,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   HomeStore homeStore = GetIt.I<HomeStore>();
   VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   RefuelStore refuelStore = GetIt.I<RefuelStore>();
+  ConnectivityStore connectivityStore = GetIt.I<ConnectivityStore>();
 
   final tabs = [HomeTab(), ReportsTab(), ProfileTab()];
 
@@ -62,4 +64,16 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state != AppLifecycleState.resumed) {
+      connectivityStore.cancelListener();
+    } else if (state == AppLifecycleState.resumed) {
+      connectivityStore.initConnectionListener();
+    }
+  }
 }
+
+

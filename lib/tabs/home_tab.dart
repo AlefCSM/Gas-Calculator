@@ -9,6 +9,7 @@ import 'package:gas_calculator/models/refuel_model.dart';
 import 'package:gas_calculator/models/vehicle_model.dart';
 import 'package:gas_calculator/pages/refuel_page.dart';
 import 'package:gas_calculator/pages/vehicle_page.dart';
+import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
@@ -28,6 +29,7 @@ class _HomeTabState extends State<HomeTab> {
   final LoginStore loginStore = GetIt.I<LoginStore>();
   final VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   final ReportStore reportStore = GetIt.I<ReportStore>();
+  final ConnectivityStore connectivityStore = GetIt.I<ConnectivityStore>();
   final SynchronizationStore synchronizationStore =
       GetIt.I<SynchronizationStore>();
 
@@ -49,7 +51,11 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   refreshHomeTab() async {
-    await synchronizationStore.sync();
+
+
+    if(connectivityStore.isConnected) {
+      await synchronizationStore.sync();
+    }
 
     await vehicleStore.getVehicles();
     if (vehicleStore.vehiclesList.isNotEmpty &&

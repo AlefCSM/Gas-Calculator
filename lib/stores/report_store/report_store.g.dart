@@ -185,6 +185,17 @@ mixin _$ReportStore on _ReportStore, Store {
   }
 
   @override
+  dynamic setGeneralReport(ReportModel value) {
+    final _$actionInfo = _$_ReportStoreActionController.startAction(
+        name: '_ReportStore.setGeneralReport');
+    try {
+      return super.setGeneralReport(value);
+    } finally {
+      _$_ReportStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 ethanolRefuelsList: ${ethanolRefuelsList},

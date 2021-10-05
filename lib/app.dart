@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/pages/home_page.dart';
 import 'package:gas_calculator/pages/login_page.dart';
+import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
@@ -21,6 +22,7 @@ void main() async {
 void getItLocators() {
   GetIt.I.registerSingleton(LoginStore());
   GetIt.I.registerSingleton(HomeStore());
+  GetIt.I.registerSingleton(ConnectivityStore());
   GetIt.I.registerSingleton(VehicleStore());
   GetIt.I.registerSingleton(RefuelStore());
   GetIt.I.registerSingleton(ReportStore());
