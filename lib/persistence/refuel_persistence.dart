@@ -57,7 +57,7 @@ class RefuelPersistence {
     queryResult = await db.query(tableRefuels,
         where: where,
         whereArgs: whereArgs,
-        orderBy: "${RefuelFields.date},${RefuelFields.odometer}");
+        orderBy: "${RefuelFields.odometer},${RefuelFields.date}");
 
     //await db.close();
 
