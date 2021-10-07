@@ -1,9 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/pages/home_page.dart';
 import 'package:gas_calculator/pages/login_page.dart';
+import 'package:gas_calculator/pages/splash_screen_page.dart';
 import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
@@ -38,7 +40,6 @@ class _AppState extends State<App> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   final LoginStore loginStore = GetIt.I<LoginStore>();
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -46,30 +47,30 @@ class _AppState extends State<App> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Container(
-              child:loading(),
+              child: loading(),
             );
           }
 
-
           if (snapshot.connectionState == ConnectionState.done) {
             loginStore.getUser();
-            return Observer(builder: (_) => loginStore.loading?loading():GasCalculator());
+            return Observer(
+                builder: (_) =>
+                    loginStore.loading ? loading() : GasCalculator());
           }
 
           return loading();
         });
-
-
   }
-  Widget loading(){
+
+  Widget loading() {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
+      title: 'Flutter Demo',
+      theme: ThemeData(
         primarySwatch: Colors.blue,
-    ),
-    home: Container(
-    child: Text("Loading"),
-    ),
+      ),
+      home: Container(
+        child: SplashScreenPage(),
+      ),
     );
   }
 }

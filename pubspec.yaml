@@ -68,6 +68,7 @@ flutter:
     - lib/assets/images/ethanol.png
     - lib/assets/images/diesel.png
     - lib/assets/images/gasoline.png
+    - lib/assets/images/wheel.png
   # colar o link abaixo na loja
   #<div>Icons made by <a href="https://www.flaticon.com/authors/monkik" title="monkik">monkik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 

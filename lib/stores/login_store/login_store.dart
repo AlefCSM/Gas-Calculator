@@ -52,8 +52,11 @@ abstract class _LoginStore with Store {
 
   void getUser() {
     setLoading(true);
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user != null) setCurrentUser(user);
+    FirebaseAuth.instance.authStateChanges().listen((user)async {
+      if (user != null) {
+        await Future.delayed(Duration(seconds:5 ));
+      }
+      setCurrentUser(user);
       setLoading(false);
     });
   }

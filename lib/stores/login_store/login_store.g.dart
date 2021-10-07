@@ -64,7 +64,7 @@ mixin _$LoginStore on _LoginStore, Store {
   final _$_LoginStoreActionController = ActionController(name: '_LoginStore');
 
   @override
-  dynamic setCurrentUser(User value) {
+  dynamic setCurrentUser(User? value) {
     final _$actionInfo = _$_LoginStoreActionController.startAction(
         name: '_LoginStore.setCurrentUser');
     try {
