@@ -5,6 +5,7 @@ import 'package:gas_calculator/models/refuel_model.dart';
 import 'package:gas_calculator/persistence/fuel_type_persistence.dart';
 import 'package:gas_calculator/persistence/refuel_persistence.dart';
 import 'package:gas_calculator/repositories/vehicle_repository.dart';
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
 part 'refuel_store.g.dart';
@@ -55,6 +56,7 @@ abstract class _RefuelStore with Store {
   String time = "";
 
   Refuel lastRefuel = Refuel();
+  Map<String, DateTime> cardHeaders = Map();
 
   @observable
   TextEditingController priceInputController = TextEditingController();
@@ -124,6 +126,25 @@ abstract class _RefuelStore with Store {
       }
 
       setRefuelList(refuels);
+    }
+  }
+
+  buildTimeHeaders() {
+    List<Refuel> list = List.from(refuelList);
+    cardHeaders.clear();
+
+    for (final item in list) {
+      DateTime parsedDate = DateFormat("dd/MM/yyyy hh:mm").parse(item.date);
+      String formatedDate = DateFormat.yMMMM().format(parsedDate);
+
+      if (cardHeaders.containsKey(formatedDate)) {
+        DateTime lastDate = parsedDate.isAfter(cardHeaders[formatedDate]!)
+            ? parsedDate
+            : cardHeaders[formatedDate] as DateTime;
+        cardHeaders[formatedDate] = lastDate;
+      } else {
+        cardHeaders.addAll({formatedDate: parsedDate});
+      }
     }
   }
 

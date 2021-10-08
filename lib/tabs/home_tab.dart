@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
+import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/refuel_card.dart';
@@ -16,6 +17,7 @@ import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/report_store/report_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:gas_calculator/synchronization_store/synchronization_store.dart';
+import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 
 class HomeTab extends StatefulWidget {
@@ -64,6 +66,8 @@ class _HomeTabState extends State<HomeTab> {
     }
     if (vehicleStore.selectedVehicle.id != null) {
       await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
+
+      refuelStore.buildTimeHeaders();
 
       if (refuelStore.refuelList.isNotEmpty) {
         var vehicle = vehicleStore.selectedVehicle;
@@ -203,7 +207,12 @@ class _HomeTabState extends State<HomeTab> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: refuelStore.refuelList.length,
                 itemBuilder: (context, index) {
-                  var refuel = refuelStore.refuelList[index];
+                  Refuel refuel = refuelStore.refuelList[index];
+                  DateTime refuelDate =
+                      DateFormat("dd/MM/yyyy hh:mm").parse(refuel.date);
+
+                  bool isHeader = refuelStore.cardHeaders.containsValue(refuelDate);
+
                   return Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
@@ -214,7 +223,7 @@ class _HomeTabState extends State<HomeTab> {
                             Container(
                               margin: EdgeInsets.only(left: 9, right: 20),
                               width: 10,
-                              height: 100,
+                              height: isHeader ? 115 : 99,
                               color: kBlack,
                               child: Center(
                                 child: ListView.builder(
@@ -232,8 +241,8 @@ class _HomeTabState extends State<HomeTab> {
                                 ),
                               ),
                             ),
-                            Align(
-                              heightFactor: 3,
+                            Positioned(
+                              top: isHeader ? 55 : 35,
                               child: Container(
                                 // margin: EdgeInsets.only(left: 9),
                                 height: 30,
@@ -270,8 +279,28 @@ class _HomeTabState extends State<HomeTab> {
                                         ),
                                         callback: () => refreshHomeTab());
                                   },
-                                  child: RefuelCard(
-                                      refuel: refuelStore.refuelList[index])))
+                                  child: Column(
+                                    children: [
+                                      Visibility(
+                                          visible: isHeader,
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                top: 10, bottom: 5),
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                                DateFormat.yMMMM()
+                                                    .format(refuelDate),
+                                                style: TextStyle(
+                                                    color: kDarkGrey,
+                                                    fontSize:
+                                                        CustomFontSize.large,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          )),
+                                      RefuelCard(
+                                          refuel: refuelStore.refuelList[index])
+                                    ],
+                                  )))
                         ],
                       ));
                 })),
