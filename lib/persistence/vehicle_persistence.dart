@@ -78,7 +78,7 @@ class VehiclePersistence {
     }
   }
 
-  Future<void> updateSelectedVehicle(int vehicleId) async {
+  Future updateSelectedVehicle(int vehicleId) async {
     final db = await GasCalculatorDatabase.instance.database;
     Map<String, dynamic> values = Map();
 

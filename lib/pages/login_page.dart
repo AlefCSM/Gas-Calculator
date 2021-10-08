@@ -5,6 +5,7 @@ import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
 import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
+import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:get_it/get_it.dart';
 
@@ -16,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   static const GOOGLE_LOGO = 'lib/assets/images/google_logo.svg';
   LoginStore loginStore = GetIt.I<LoginStore>();
+  ConnectivityStore connectivityStore = GetIt.I<ConnectivityStore>();
   final _loginFormKey = GlobalKey<FormState>();
   final _registerFormKey = GlobalKey<FormState>();
   final _lostPasswordFormKey = GlobalKey<FormState>();
@@ -129,7 +131,11 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   if (_loginFormKey.currentState!.validate()) {
                     _loginFormKey.currentState!.save();
-                    loginStore.signInWithEmail(context);
+                    if (connectivityStore.isConnected) {
+                      loginStore.signInWithEmail(context);
+                    } else {
+                      //mostrar pop up de erro
+                    }
                   }
                 },
               ),
@@ -140,7 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                 prefixIcon: GOOGLE_LOGO,
                 text: "Continue with Google",
                 onPressed: () {
-                  loginStore.signInWithGoogle(context);
+                  if (connectivityStore.isConnected) {
+                    loginStore.signInWithGoogle(context);
+                  } else {
+                    //mostrar pop up de erro
+                  }
                 },
               ),
             ),
@@ -229,7 +239,11 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   if (_lostPasswordFormKey.currentState!.validate()) {
                     _lostPasswordFormKey.currentState!.save();
-                    loginStore.resetEmail();
+                    if (connectivityStore.isConnected) {
+                      loginStore.resetEmail();
+                    } else {
+                      //mostrar pop up de erro
+                    }
                   }
                 },
               ),
@@ -341,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.text,
                 onChanged: (value) => loginStore.setConfirmPassword(value),
                 validator: (value) {
-                  if (value.isEmpty ) {
+                  if (value.isEmpty) {
                     return "Fill this field";
                   }
                   if (value != loginStore.password) {
@@ -358,7 +372,11 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   if (_registerFormKey.currentState!.validate()) {
                     _registerFormKey.currentState!.save();
-                    loginStore.register(context);
+                    if (connectivityStore.isConnected) {
+                      loginStore.register(context);
+                    } else {
+                      //mostrar pop up de erro
+                    }
                   }
                 },
               ),

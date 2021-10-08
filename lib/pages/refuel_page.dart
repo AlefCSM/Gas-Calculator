@@ -42,7 +42,7 @@ class _RefuelPageState extends State<RefuelPage> {
   late final String initialHour;
   bool showModal = false;
 
-  Future<void> datePicker(BuildContext context) async {
+  Future datePicker(BuildContext context) async {
     final DateTime? date = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -55,7 +55,7 @@ class _RefuelPageState extends State<RefuelPage> {
     showModal = false;
   }
 
-  Future<void> timePicker(BuildContext context) async {
+  Future timePicker(BuildContext context) async {
     var selectedTime = await showTimePicker(
         initialTime: TimeOfDay.now(),
         context: context,

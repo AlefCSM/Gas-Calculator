@@ -35,7 +35,7 @@ class _HomeTabState extends State<HomeTab> {
   final SynchronizationStore synchronizationStore =
       GetIt.I<SynchronizationStore>();
 
-  Future<void> initRefuelVariables({double? odometer}) async {
+  Future initRefuelVariables({double? odometer}) async {
     if (vehicleStore.selectedVehicle.id != null) {
       await refuelStore.getLastRefuel(
           vehicleId: vehicleStore.selectedVehicle.id!, odometer: odometer);
@@ -79,7 +79,7 @@ class _HomeTabState extends State<HomeTab> {
     vehicleStore.buildDropdownList();
   }
 
-  Future<void> initHomeVariables() async {
+  Future initHomeVariables() async {
     await vehicleStore.getVehicles();
     vehicleStore.buildDropdownList();
 

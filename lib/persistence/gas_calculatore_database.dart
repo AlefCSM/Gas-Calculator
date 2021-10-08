@@ -87,4 +87,11 @@ class GasCalculatorDatabase {
     final db = await instance.database;
     db.close();
   }
+
+  Future deleteUserData() async{
+    final db = await instance.database;
+
+    db.delete(tableRefuels);
+    db.delete(tableVehicles);
+  }
 }

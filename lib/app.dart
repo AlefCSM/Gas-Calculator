@@ -86,10 +86,15 @@ class GasCalculator extends StatelessWidget {
 
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: kBackgroundGrey
-      ),
-      home:   loginStore.currentUser!=null ?HomePage(title: "Gas Calculator",):LoginPage(),
+          primarySwatch: Colors.blue,
+          primaryColor: kDarkBlueColor,
+          scaffoldBackgroundColor: kBackgroundGrey),
+      home: Observer(
+          builder: (_) => loginStore.currentUser != null
+              ? HomePage(
+                  title: "Gas Calculator",
+                )
+              : LoginPage()),
     );
   }
 }

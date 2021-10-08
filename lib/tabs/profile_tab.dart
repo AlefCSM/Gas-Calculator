@@ -37,9 +37,9 @@ class ProfileTab extends StatelessWidget {
           ),
           SubmitButton(
             text: "Sign out",
-            onPressed: () {
+            onPressed: () async{
+              await loginStore.signOut(context);
               homeStore.setTab(homeStore.homePageIndex);
-              loginStore.signOut(context);
             },
           )
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:gas_calculator/pages/login_page.dart';
+import 'package:gas_calculator/persistence/gas_calculatore_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobx/mobx.dart';
 
@@ -30,7 +31,7 @@ abstract class _LoginStore with Store {
   String confirmPassword = "";
 
   @action
-  setCurrentUser(User value) => currentUser = value;
+  setCurrentUser(User? value) => currentUser = value;
 
   @action
   setCurrentForm(LoginForms form) => currentForm = form;
@@ -47,14 +48,11 @@ abstract class _LoginStore with Store {
   @computed
   get hasUser => currentUser != null;
 
-  // @computed
-  // get initAtHome => loading &&hasUser
-
   void getUser() {
     setLoading(true);
-    FirebaseAuth.instance.authStateChanges().listen((user)async {
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
-        await Future.delayed(Duration(seconds:5 ));
+        await Future.delayed(Duration(seconds: 5));
       }
       setCurrentUser(user);
       setLoading(false);
@@ -93,7 +91,6 @@ abstract class _LoginStore with Store {
 
       User? user = userCredential.user;
       if (user != null) setCurrentUser(user);
-      // pushToHomePage(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -106,8 +103,6 @@ abstract class _LoginStore with Store {
   }
 
   signInWithGoogle(BuildContext context) async {
-    // if (hasUser) return pushToHomePage(context);
-
     try {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
@@ -121,7 +116,6 @@ abstract class _LoginStore with Store {
 
         final user = userCredential.user;
         if (user != null) setCurrentUser(user);
-        // pushToHomePage(context);
       }
     } catch (error) {
       print(error);
@@ -133,22 +127,11 @@ abstract class _LoginStore with Store {
     setCurrentForm(LoginForms.LOGIN);
   }
 
-  signOut(BuildContext context) async {
+  Future signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
+    await deleteUserData();
     setCurrentForm(LoginForms.LOGIN);
-    //pushToLogin(context);
   }
-
-  // pushToHomePage(BuildContext context) {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => HomePage(
-  //         title: "Gas Calculator",
-  //       ),
-  //     ),
-  //   );
-  // }
 
   pushToLogin(BuildContext context) {
     Navigator.pushReplacement(
@@ -157,5 +140,9 @@ abstract class _LoginStore with Store {
         builder: (context) => LoginPage(),
       ),
     );
+  }
+
+  Future deleteUserData() async {
+    await GasCalculatorDatabase.instance.deleteUserData();
   }
 }
