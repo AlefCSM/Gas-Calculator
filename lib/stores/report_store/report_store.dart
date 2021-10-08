@@ -83,9 +83,9 @@ abstract class _ReportStore with Store {
 
       report.totalKm = refuelList.last.odometer - refuelList.first.odometer;
 
-      report.averageConsumption = getAverageConsumption(refuelList);
-      report.highestConsumption = getHighestConsumption(refuelList);
       report.lowestConsumption = getLowestConsumption(refuelList);
+      report.highestConsumption = getHighestConsumption(refuelList);
+      report.averageConsumption = getAverageConsumption(refuelList);
       report.lastConsumption =
           refuelList.isEmpty ? 0.0 : refuelList.last.consuption;
     }

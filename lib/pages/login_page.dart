@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       child: SafeArea(
         child: Scaffold(
           body: Container(
-            color: kAccentColor,
+            color: kDarkBlueColor,
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: Observer(

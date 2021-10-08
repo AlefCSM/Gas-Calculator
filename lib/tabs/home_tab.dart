@@ -53,9 +53,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   refreshHomeTab() async {
-
-
-    if(connectivityStore.isConnected) {
+    if (connectivityStore.isConnected) {
       await synchronizationStore.sync();
     }
 
@@ -86,9 +84,6 @@ class _HomeTabState extends State<HomeTab> {
     vehicleStore.buildDropdownList();
 
     await vehicleStore.getSelectedVehicle();
-    if (vehicleStore.selectedVehicle.id != null) {
-      await refuelStore.getRefuels(vehicleId: vehicleStore.selectedVehicle.id!);
-    }
 
     if (refuelStore.fuelTypeList.length == 0) {
       await refuelStore.getFuelTypes();
@@ -151,9 +146,7 @@ class _HomeTabState extends State<HomeTab> {
                                     if (vehicle != null) {
                                       await vehicleStore
                                           .updateSelectedVehicle(vehicle.id!);
-                                      refuelStore.getRefuels(
-                                          vehicleId:
-                                              vehicleStore.selectedVehicle.id!);
+                                      refreshHomeTab();
                                     }
                                   },
                                   isEnabled: true,
@@ -244,7 +237,6 @@ class _HomeTabState extends State<HomeTab> {
                             Positioned(
                               top: isHeader ? 55 : 35,
                               child: Container(
-                                // margin: EdgeInsets.only(left: 9),
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
@@ -262,9 +254,6 @@ class _HomeTabState extends State<HomeTab> {
                           ]),
                           Expanded(
                               child: GestureDetector(
-                                  onLongPress: () async {
-                                    await refuelStore.deleteRefuel(refuel.id!);
-                                  },
                                   onTap: () async {
                                     await initRefuelVariables(
                                         odometer: refuel.odometer);
