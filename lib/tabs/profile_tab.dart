@@ -36,10 +36,20 @@ class ProfileTab extends StatelessWidget {
                 )),
           ),
           SubmitButton(
-            text: "Sign out",
-            onPressed: () async{
-              await loginStore.signOut(context);
-              homeStore.setTab(homeStore.homePageIndex);
+            text: "Log out",
+            onPressed: () async {
+              bool? result = await homeStore.showConfirmationDialog(
+                      context: context,
+                      title: "Do you really want to log out?",
+                      description: "",
+                      confirmButton: "Yes",
+                      cancelButton: "No") ??
+                  false;
+
+              if (result) {
+                await loginStore.signOut(context);
+                homeStore.setTab(homeStore.homePageIndex);
+              }
             },
           )
         ],

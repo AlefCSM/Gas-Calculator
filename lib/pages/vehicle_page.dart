@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
+import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:get_it/get_it.dart';
@@ -25,6 +26,7 @@ class _VehiclePageState extends State<VehiclePage> {
   bool success = false;
   final _key = GlobalKey<FormState>();
 
+  final HomeStore homeStore = GetIt.I<HomeStore>();
   final RefuelStore refuelStore = GetIt.I<RefuelStore>();
   final VehicleStore vehicleStore = GetIt.I<VehicleStore>();
 
@@ -115,10 +117,20 @@ class _VehiclePageState extends State<VehiclePage> {
                 child: SubmitButton(
                   text: "Delete",
                   onPressed: () async {
-                    await refuelStore.deleteRefuelsFromVehicle(
-                        vehicleStore.currentVehicle.id!);
-                    success = await vehicleStore.deleteVehicle();
-                    close(success, context);
+                    bool? result = await homeStore.showConfirmationDialog(
+                            context: context,
+                            title: "Do you really want to delete?",
+                            description: "",
+                            confirmButton: "Yes",
+                            cancelButton: "No") ??
+                        false;
+
+                    if (result) {
+                      await refuelStore.deleteRefuelsFromVehicle(
+                          vehicleStore.currentVehicle.id!);
+                      success = await vehicleStore.deleteVehicle();
+                      close(success, context);
+                    }
                   },
                 ),
               ),

@@ -132,7 +132,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                  "${reportStore.generalReport.averageConsumption} km/L",
+                                  "${reportStore.generalReport.averageConsumption.toStringAsFixed(3)} km/L",
                                   style: TextStyle(
                                       color: kDarkGrey,
                                       fontWeight: FontWeight.w500))

@@ -7,6 +7,7 @@ import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
 import 'package:gas_calculator/models/fuel_type_model.dart';
+import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
 import 'package:get_it/get_it.dart';
@@ -24,6 +25,7 @@ class RefuelPage extends StatefulWidget {
 }
 
 class _RefuelPageState extends State<RefuelPage> {
+  final HomeStore homeStore = GetIt.I<HomeStore>();
   final RefuelStore refuelStore = GetIt.I<RefuelStore>();
   final VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   final _key = GlobalKey<FormState>();
@@ -75,7 +77,8 @@ class _RefuelPageState extends State<RefuelPage> {
           "${refuelStore.currentRefuel.litres}";
       refuelStore.totalInputController.text =
           "${refuelStore.currentRefuel.totalCost}";
-      refuelStore.priceInputController.text = "${refuelStore.currentRefuel.price}";
+      refuelStore.priceInputController.text =
+          "${refuelStore.currentRefuel.price}";
       var date =
           DateFormat("dd/MM/yyyy hh:mm").parse(refuelStore.currentRefuel.date);
 
@@ -393,12 +396,22 @@ class _RefuelPageState extends State<RefuelPage> {
                 child: SubmitButton(
                   text: "Delete",
                   onPressed: () async {
+                    bool? result = await homeStore.showConfirmationDialog(
+                            context: context,
+                            title: "Do you really want to delete?",
+                            description: "",
+                            confirmButton: "Yes",
+                            cancelButton: "No") ??
+                        false;
 
-                    var success = await refuelStore.deleteRefuel(refuelStore.currentRefuel.id!);
-                    if(success){
-                      refuelStore.getRefuels(
-                          vehicleId: vehicleStore.selectedVehicle.id!);
-                      Navigator.of(context).pop();
+                    if (result) {
+                      var success = await refuelStore
+                          .deleteRefuel(refuelStore.currentRefuel.id!);
+                      if (success) {
+                        refuelStore.getRefuels(
+                            vehicleId: vehicleStore.selectedVehicle.id!);
+                        Navigator.of(context).pop();
+                      }
                     }
                   },
                 ),

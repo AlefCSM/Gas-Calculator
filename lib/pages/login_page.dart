@@ -6,6 +6,7 @@ import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constant
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
 import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart';
+import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/login_store/login_store.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   static const GOOGLE_LOGO = 'lib/assets/images/google_logo.svg';
   LoginStore loginStore = GetIt.I<LoginStore>();
+  HomeStore homeStore = GetIt.I<HomeStore>();
   ConnectivityStore connectivityStore = GetIt.I<ConnectivityStore>();
   final _loginFormKey = GlobalKey<FormState>();
   final _registerFormKey = GlobalKey<FormState>();
@@ -134,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (connectivityStore.isConnected) {
                       loginStore.signInWithEmail(context);
                     } else {
-                      //mostrar pop up de erro
+                      homeStore.showDisconnectionDialog(context: context);
                     }
                   }
                 },
@@ -149,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                   if (connectivityStore.isConnected) {
                     loginStore.signInWithGoogle(context);
                   } else {
-                    //mostrar pop up de erro
+                     homeStore.showDisconnectionDialog(context: context);
                   }
                 },
               ),
@@ -242,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (connectivityStore.isConnected) {
                       loginStore.resetEmail();
                     } else {
-                      //mostrar pop up de erro
+                      homeStore.showDisconnectionDialog(context: context);
                     }
                   }
                 },
@@ -375,7 +377,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (connectivityStore.isConnected) {
                       loginStore.register(context);
                     } else {
-                      //mostrar pop up de erro
+                      homeStore.showDisconnectionDialog(context: context);
                     }
                   }
                 },
