@@ -11,6 +11,7 @@ class RefuelFields {
   static final String fuelTypeId = 'fuelTypeId';
   static final String firebaseId = 'firebaseId';
   static final String deleted = 'deleted';
+  static final String isFillingUp = 'isFillingUp';
 }
 
 class Refuel {
@@ -23,6 +24,7 @@ class Refuel {
   late int vehicleId;
   late int fuelTypeId;
   late String firebaseId;
+  late bool isFillingUp;
   late bool deleted;
   late double consuption;
 
@@ -36,6 +38,7 @@ class Refuel {
     this.vehicleId = 0,
     this.fuelTypeId = 0,
     this.firebaseId = "",
+    this.isFillingUp = true,
     this.deleted = false,
     this.consuption = 0.0,
   });
@@ -49,7 +52,8 @@ class Refuel {
           double? litres,
           int? vehicleId,
           String? firebaseId,
-          bool? deleted}) =>
+          bool? deleted,
+          bool? isFillingUp}) =>
       Refuel(
         id: id ?? this.id,
         date: date ?? this.date,
@@ -61,20 +65,23 @@ class Refuel {
         fuelTypeId: fuelTypeId,
         firebaseId: firebaseId ?? this.firebaseId,
         deleted: deleted ?? this.deleted,
+        isFillingUp: isFillingUp ?? this.isFillingUp,
       );
 
   static Refuel fromJson(Map<String, dynamic> json, {bool firebase = false}) =>
       Refuel(
-          id: firebase ? null : json[RefuelFields.id] as int,
-          date: json[RefuelFields.date],
-          odometer: double.parse('${json[RefuelFields.odometer]}'),
-          price: double.parse('${json[RefuelFields.price]}'),
-          totalCost: double.parse('${json[RefuelFields.totalCost]}'),
-          litres: double.parse('${json[RefuelFields.litres]}'),
-          vehicleId: firebase?0: json[RefuelFields.vehicleId] as int,
-          fuelTypeId: json[RefuelFields.fuelTypeId] as int,
-          firebaseId: json[RefuelFields.firebaseId]??"",
-          deleted: json[RefuelFields.deleted] == 1);
+        id: firebase ? null : json[RefuelFields.id] as int,
+        date: json[RefuelFields.date],
+        odometer: double.parse('${json[RefuelFields.odometer]}'),
+        price: double.parse('${json[RefuelFields.price]}'),
+        totalCost: double.parse('${json[RefuelFields.totalCost]}'),
+        litres: double.parse('${json[RefuelFields.litres]}'),
+        vehicleId: firebase ? 0 : json[RefuelFields.vehicleId] as int,
+        fuelTypeId: json[RefuelFields.fuelTypeId] as int,
+        firebaseId: json[RefuelFields.firebaseId] ?? "",
+        deleted: json[RefuelFields.deleted] == 1,
+        isFillingUp: json[RefuelFields.isFillingUp] == 1,
+      );
 
   Map<String, dynamic> toJson({bool firebase = false}) {
     final Map<String, dynamic> data = Map<String, dynamic>();
@@ -89,6 +96,7 @@ class Refuel {
       data[RefuelFields.vehicleId] = this.vehicleId;
     }
     data[RefuelFields.deleted] = this.deleted ? 1 : 0;
+    data[RefuelFields.isFillingUp] = this.isFillingUp ? 1 : 0;
     return data;
   }
 }

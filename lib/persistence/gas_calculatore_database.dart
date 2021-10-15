@@ -63,6 +63,7 @@ class GasCalculatorDatabase {
       ${RefuelFields.fuelTypeId} $integerType,
       ${RefuelFields.firebaseId} $textType,
       ${RefuelFields.deleted} $integerTypeNotNull,
+      ${RefuelFields.isFillingUp} $integerTypeNotNull,
       FOREIGN KEY (${RefuelFields.vehicleId}) REFERENCES $tableVehicles(${VehicleFields.id}),
       FOREIGN KEY (${RefuelFields.fuelTypeId}) REFERENCES $tableFuelTypes(${FuelTypeFields.id})
     ); ''');
@@ -88,7 +89,7 @@ class GasCalculatorDatabase {
     db.close();
   }
 
-  Future deleteUserData() async{
+  Future deleteUserData() async {
     final db = await instance.database;
 
     db.delete(tableRefuels);

@@ -208,6 +208,8 @@ abstract class _RefuelStore with Store {
     Refuel currentRefuel = refuels[index + 1];
     Refuel lastRefuel = refuels[index];
 
+    if (!currentRefuel.isFillingUp || !lastRefuel.isFillingUp) return 0.0;
+
     var kilometers = currentRefuel.odometer - lastRefuel.odometer;
 
     return kilometers / currentRefuel.litres;

@@ -1,8 +1,11 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
+import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/components/custom_dropdown.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/custom_text_form_field.dart';
@@ -367,8 +370,46 @@ class _RefuelPageState extends State<RefuelPage> {
                   )),
               Container(
                 margin: EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Observer(
+                          builder: (_) => Transform.scale(
+                            alignment: Alignment.centerLeft,
+                            scale: 0.8,
+                            child: CupertinoSwitch(
+                              activeColor: kDarkBlueColor,
+                              value: refuelStore.currentRefuel.isFillingUp,
+                              onChanged: (value) {
+                                refuelStore.currentRefuel.isFillingUp =
+                                    !refuelStore.currentRefuel.isFillingUp;
+
+                                refuelStore.setCurrentRefuel(
+                                    refuelStore.currentRefuel);
+                              },
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text("Are you filling the tank?"),
+                        )
+                      ],
+                    ),
+                    Text(
+                      "Consumption is calculated between two full tanks",
+                      style: TextStyle(
+                          color: kLightGrey, fontSize: CustomFontSize.small),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 10),
                 child: SubmitButton(
-                  text: "save",
+                  text: "Save",
                   onPressed: () async {
                     if (_key.currentState!.validate()) {
                       _key.currentState!.save();

@@ -106,7 +106,8 @@ abstract class _ReportStore with Store {
   }
 
   double getLowestConsumption(List<Refuel> refuels) {
-    refuels.removeWhere((refuel) => refuel.consuption == 0.0);
+    refuels.removeWhere(
+        (refuel) => refuel.consuption == 0.0 || !refuel.isFillingUp);
 
     if (refuels.isEmpty) return 0.0;
 
@@ -120,6 +121,7 @@ abstract class _ReportStore with Store {
   }
 
   double getHighestConsumption(List<Refuel> refuels) {
+    if (refuels.isEmpty) return 0.0;
     return refuels.reduce((value, element) {
       if (value.consuption > element.consuption) {
         return value;
@@ -130,7 +132,7 @@ abstract class _ReportStore with Store {
   }
 
   double getAverageConsumption(List<Refuel> refuels) {
-    if (refuels.length == 0) return 0.0;
+    if (refuels.isEmpty) return 0.0;
     double sumConsumption =
         refuels.fold(0.0, (sum, item) => sum + item.consuption);
 
