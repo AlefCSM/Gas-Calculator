@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
+import 'package:gas_calculator/components/list_item.dart';
 import 'package:gas_calculator/models/vehicle_model.dart';
 import 'package:gas_calculator/pages/vehicle_page.dart';
 import 'package:gas_calculator/stores/home_store/home_store.dart';
@@ -35,17 +36,20 @@ class _VehicleListPageState extends State<VehicleListPage> {
                         padding: EdgeInsets.only(left: 16, right: 16, top: 32),
                         child: Column(
                           children: [
-                            SubmitButton(
-                              text: "Add new Vehicle",
-                              onPressed: () {
-                                vehicleStore.setCurrentVehicle(Vehicle());
-                                homeStore.navigateToPage(
-                                    context: context,
-                                    page: VehiclePage(
-                                      label: "New vehicle",
-                                    ),
-                                    callback: () {});
-                              },
+                            Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              child: SubmitButton(
+                                text: "Add new Vehicle",
+                                onPressed: () {
+                                  vehicleStore.setCurrentVehicle(Vehicle());
+                                  homeStore.navigateToPage(
+                                      context: context,
+                                      page: VehiclePage(
+                                        label: "New vehicle",
+                                      ),
+                                      callback: () {});
+                                },
+                              ),
                             ),
                             ListView.builder(
                               shrinkWrap: true,
@@ -64,10 +68,8 @@ class _VehicleListPageState extends State<VehicleListPage> {
                                             label: "Edit vehicle", edit: true),
                                         callback: () {});
                                   },
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 10),
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Text("${vehicle.name}"),
+                                  child: ListItem(
+                                    text: "${vehicle.name}",
                                   ),
                                 );
                               },
