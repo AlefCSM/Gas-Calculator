@@ -35,7 +35,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               animation: controller,
               builder: (_, child) {
                 return Transform.rotate(
-                  angle: controller.value * 2 * math.pi,
+                  angle: - controller.value * 2 * math.pi,
                   child: child,
                 );
               },
