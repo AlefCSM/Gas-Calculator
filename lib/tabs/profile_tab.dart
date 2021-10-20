@@ -40,12 +40,21 @@ class ProfileTab extends StatelessWidget {
                 ),
               );
             },
-            child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [Text("Vehicles")],
-                )),
+            child: ListItem(
+              text: "Vehicles",
+            ),
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AboutPage(),
+                ),
+              );
+            },
+            child: ListItem(text: "About"),
           ),
           SubmitButton(
             text: "Log out",
