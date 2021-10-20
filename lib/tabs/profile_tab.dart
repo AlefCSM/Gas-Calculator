@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gas_calculator/assets/custom_colors/color_constants.dart';
+import 'package:gas_calculator/assets/custom_font_size/custom_font_size_constants.dart';
 import 'package:gas_calculator/components/custom_submit_buttom.dart';
 import 'package:gas_calculator/components/list_item.dart';
 import 'package:gas_calculator/pages/about_page.dart';
@@ -21,7 +23,12 @@ class ProfileTab extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(bottom: 20),
             child: Text(
-                "${loginStore.currentUser!.displayName ?? loginStore.currentUser!.email}",style: TextStyle(color: kDoveGrey,fontWeight: FontWeight.bold,fontSize: CustomFontSize.large),),
+              "${loginStore.currentUser!.displayName ?? loginStore.currentUser!.email}",
+              style: TextStyle(
+                  color: kDoveGrey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: CustomFontSize.large),
+            ),
           ),
           GestureDetector(
             behavior: HitTestBehavior.translucent,

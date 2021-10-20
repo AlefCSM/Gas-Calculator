@@ -115,98 +115,102 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(children: [
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
-        margin: EdgeInsets.only(top: 32),
-        child: Column(
-          children: [
-            Observer(
-              builder: (_) {
-                return Visibility(
-                  visible: vehicleStore.selectedVehicle.id != null ||
-                      vehicleStore.vehiclesList.isNotEmpty,
-                  child: Column(
-                    children: [
-                      Text("Selected vehicle"),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Observer(
-                            builder: (_) => CustomDropdown(
-                                  value: vehicleStore.selectedVehicle.id != null
-                                      ? vehicleStore.selectedVehicle
-                                      : vehicleStore.vehiclesList.length > 0
-                                          ? vehicleStore.vehiclesList[0]
-                                          : Vehicle(),
-                                  dropdownMenuItemList:
-                                      vehicleStore.vehiclesDrodownList,
-                                  onChanged: (Vehicle? vehicle) async {
-                                    if (vehicle != null) {
-                                      await vehicleStore
-                                          .updateSelectedVehicle(vehicle.id!);
-                                      refreshHomeTab();
-                                    }
-                                  },
-                                  isEnabled: true,
-                                )),
-                      )
-                    ],
-                  ),
-                  replacement: Text("There are no vehicles selected"),
-                );
-              },
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                bottom: 20,
+      body: Column(children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+          margin: EdgeInsets.only(top: 32),
+          child: Column(
+            children: [
+              Observer(
+                builder: (_) {
+                  return Visibility(
+                    visible: vehicleStore.selectedVehicle.id != null ||
+                        vehicleStore.vehiclesList.isNotEmpty,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Selected vehicle",
+                          style: TextStyle(
+                              color: kDoveGrey, fontSize: CustomFontSize.large),
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          child: Observer(
+                              builder: (_) => CustomDropdown(
+                                    value: vehicleStore.selectedVehicle.id !=
+                                            null
+                                        ? vehicleStore.selectedVehicle
+                                        : vehicleStore.vehiclesList.length > 0
+                                            ? vehicleStore.vehiclesList[0]
+                                            : Vehicle(),
+                                    dropdownMenuItemList:
+                                        vehicleStore.vehiclesDrodownList,
+                                    onChanged: (Vehicle? vehicle) async {
+                                      if (vehicle != null) {
+                                        await vehicleStore
+                                            .updateSelectedVehicle(vehicle.id!);
+                                        refreshHomeTab();
+                                      }
+                                    },
+                                    isEnabled: true,
+                                  )),
+                        )
+                      ],
+                    ),
+                    replacement: Text("There are no vehicles selected"),
+                  );
+                },
               ),
-              child: SubmitButton(
-                  text: "Add new Refuel",
-                  onPressed: () async {
-                    await initRefuelVariables();
+              Container(
+                margin: EdgeInsets.only(
+                  bottom: 20,
+                ),
+                child: SubmitButton(
+                    text: "Add new Refuel",
+                    onPressed: () async {
+                      await initRefuelVariables();
 
-                    if (vehicleStore.hasVehicleSelected) {
-                      refuelStore.setCurrentRefuel(Refuel());
-                      homeStore.navigateToPage(
-                          context: context,
-                          page: RefuelPage(
-                            label: "New refuel",
-                          ),
-                          callback: () => refreshHomeTab());
-                    } else {
-                      vehicleStore.setCurrentVehicle(Vehicle());
-                      homeStore.navigateToPage(
-                          context: context,
-                          page: VehiclePage(label: "New vehicle"),
-                          callback: () => refreshHomeTab());
-                    }
-                  }),
-            ),
-          ],
+                      if (vehicleStore.hasVehicleSelected) {
+                        refuelStore.setCurrentRefuel(Refuel());
+                        homeStore.navigateToPage(
+                            context: context,
+                            page: RefuelPage(
+                              label: "New refuel",
+                            ),
+                            callback: () => refreshHomeTab());
+                      } else {
+                        vehicleStore.setCurrentVehicle(Vehicle());
+                        homeStore.navigateToPage(
+                            context: context,
+                            page: VehiclePage(label: "New vehicle"),
+                            callback: () => refreshHomeTab());
+                      }
+                    }),
+              ),
+            ],
+          ),
         ),
-      ),
-      Divider(
-        thickness: 1,
-        height: 1,
-      ),
-      Flexible(
+        Divider(
+          thickness: 1,
+          height: 1,
+        ),
+        Flexible(
           child: SingleChildScrollView(
-        child: Observer(
-            builder: (_) => ListView.builder(
-                reverse: true,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: refuelStore.refuelList.length,
-                itemBuilder: (context, index) {
-                  Refuel refuel = refuelStore.refuelList[index];
-                  DateTime refuelDate =
-                      DateFormat("dd/MM/yyyy hh:mm").parse(refuel.date);
-
-                  bool isHeader = refuelStore.cardHeaders.containsValue(refuelDate);
-
-                  return Container(
+            child: Observer(
+              builder: (_) => ListView.builder(
+                  reverse: true,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: refuelStore.refuelList.length,
+                  itemBuilder: (context, index) {
+                    Refuel refuel = refuelStore.refuelList[index];
+                    DateTime refuelDate =
+                        DateFormat("dd/MM/yyyy hh:mm").parse(refuel.date);
+                    bool isHeader =
+                        refuelStore.cardHeaders.containsValue(refuelDate);
+                    return Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                       ),
@@ -253,47 +257,51 @@ class _HomeTabState extends State<HomeTab> {
                             )
                           ]),
                           Expanded(
-                              child: GestureDetector(
-                                  onTap: () async {
-                                    await initRefuelVariables(
-                                        odometer: refuel.odometer);
+                            child: GestureDetector(
+                              onTap: () async {
+                                await initRefuelVariables(
+                                    odometer: refuel.odometer);
 
-                                    refuelStore.setCurrentRefuel(refuel);
+                                refuelStore.setCurrentRefuel(refuel);
 
-                                    homeStore.navigateToPage(
-                                        context: context,
-                                        page: RefuelPage(
-                                          label: "Edit refuel",
-                                          edit: true,
-                                        ),
-                                        callback: () => refreshHomeTab());
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Visibility(
-                                          visible: isHeader,
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: 10, bottom: 5),
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                                DateFormat.yMMMM()
-                                                    .format(refuelDate),
-                                                style: TextStyle(
-                                                    color: kDarkGrey,
-                                                    fontSize:
-                                                        CustomFontSize.large,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          )),
-                                      RefuelCard(
-                                          refuel: refuelStore.refuelList[index])
-                                    ],
-                                  )))
+                                homeStore.navigateToPage(
+                                    context: context,
+                                    page: RefuelPage(
+                                      label: "Edit refuel",
+                                      edit: true,
+                                    ),
+                                    callback: () => refreshHomeTab());
+                              },
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: isHeader,
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(top: 10, bottom: 5),
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                          DateFormat.yMMMM().format(refuelDate),
+                                          style: TextStyle(
+                                              color: kDarkGrey,
+                                              fontSize: CustomFontSize.large,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  RefuelCard(
+                                      refuel: refuelStore.refuelList[index])
+                                ],
+                              ),
+                            ),
+                          )
                         ],
-                      ));
-                })),
-      ))
-    ]));
+                      ),
+                    );
+                  }),
+            ),
+          ),
+        )
+      ]),
+    );
   }
 }

@@ -27,56 +27,62 @@ class _VehicleListPageState extends State<VehicleListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-            child: Observer(
-                builder: (_) => Visibility(
-                      visible: !vehicleStore.loading,
-                      child: SingleChildScrollView(
-                          child: Container(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 32),
-                        child: Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 20),
-                              child: SubmitButton(
-                                text: "Add new Vehicle",
-                                onPressed: () {
-                                  vehicleStore.setCurrentVehicle(Vehicle());
-                                  homeStore.navigateToPage(
-                                      context: context,
-                                      page: VehiclePage(
-                                        label: "New vehicle",
-                                      ),
-                                      callback: () {});
-                                },
+      appBar: AppBar(
+        title: Text("Vehicles list"),
+      ),
+      body: SafeArea(
+        child: Observer(
+          builder: (_) => Visibility(
+            visible: !vehicleStore.loading,
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(left: 16, right: 16, top: 32),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: SubmitButton(
+                        text: "Add new Vehicle",
+                        onPressed: () {
+                          vehicleStore.setCurrentVehicle(Vehicle());
+                          homeStore.navigateToPage(
+                              context: context,
+                              page: VehiclePage(
+                                label: "New vehicle",
                               ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: vehicleStore.vehiclesList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final vehicle =
-                                    vehicleStore.vehiclesList[index];
-                                return GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    vehicleStore.setCurrentVehicle(vehicle);
-                                    homeStore.navigateToPage(
-                                        context: context,
-                                        page: VehiclePage(
-                                            label: "Edit vehicle", edit: true),
-                                        callback: () {});
-                                  },
-                                  child: ListItem(
-                                    text: "${vehicle.name}",
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      )),
-                    ))));
+                              callback: () {});
+                        },
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: vehicleStore.vehiclesList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final vehicle = vehicleStore.vehiclesList[index];
+                        return GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            vehicleStore.setCurrentVehicle(vehicle);
+                            homeStore.navigateToPage(
+                                context: context,
+                                page: VehiclePage(
+                                    label: "Edit vehicle", edit: true),
+                                callback: () {});
+                          },
+                          child: ListItem(
+                            text: "${vehicle.name}",
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
