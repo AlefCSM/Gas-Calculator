@@ -65,6 +65,7 @@ class _AppState extends State<App> {
   Widget loading() {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner:false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -85,6 +86,7 @@ class GasCalculator extends StatelessWidget {
     ]);
 
     return MaterialApp(
+      debugShowCheckedModeBanner:false,
       theme: ThemeData(
           primarySwatch: Colors.blue,
           primaryColor: kDarkBlueColor,
