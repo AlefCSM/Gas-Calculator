@@ -159,7 +159,11 @@ class _HomeTabState extends State<HomeTab> {
                         )
                       ],
                     ),
-                    replacement: Text("There are no vehicles selected"),
+                    replacement: Text(
+                      "There are no vehicles selected",
+                      style: TextStyle(
+                          color: kDoveGrey, fontSize: CustomFontSize.large),
+                    ),
                   );
                 },
               ),

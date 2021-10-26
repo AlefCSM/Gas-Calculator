@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   HomeStore homeStore = GetIt.I<HomeStore>();
   VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   RefuelStore refuelStore = GetIt.I<RefuelStore>();
@@ -30,11 +30,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child:Observer(
-        builder: (_) {
-          return tabs[homeStore.tabIndex];
-        },
-      ),),
+      body: SafeArea(
+        child: Observer(
+          builder: (_) {
+            return tabs[homeStore.tabIndex];
+          },
+        ),
+      ),
       bottomNavigationBar: Observer(
         builder: (_) {
           return BottomNavigationBar(
@@ -75,5 +77,3 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 }
-
-
