@@ -5,6 +5,7 @@ import 'package:gas_calculator/stores/connectivity_store/connectivity_store.dart
 import 'package:gas_calculator/stores/home_store/home_store.dart';
 import 'package:gas_calculator/stores/refuel_store/refuel_store.dart';
 import 'package:gas_calculator/stores/vehicle_store/vehicle_store.dart';
+import 'package:gas_calculator/synchronization_store/synchronization_store.dart';
 import 'package:gas_calculator/tabs/home_tab.dart';
 import 'package:gas_calculator/tabs/profile_tab.dart';
 import 'package:gas_calculator/tabs/reports_tab.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   VehicleStore vehicleStore = GetIt.I<VehicleStore>();
   RefuelStore refuelStore = GetIt.I<RefuelStore>();
   ConnectivityStore connectivityStore = GetIt.I<ConnectivityStore>();
+  SynchronizationStore synchronizationStore = GetIt.I<SynchronizationStore>();
 
   final tabs = [HomeTab(), ReportsTab(), ProfileTab()];
 
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )
             ],
             onTap: (index) {
-              homeStore.setTab(index);
+              if (!synchronizationStore.synchronizing) homeStore.setTab(index);
             },
           );
         },

@@ -174,6 +174,8 @@ class _HomeTabState extends State<HomeTab> {
                 child: SubmitButton(
                     text: "Add new Refuel",
                     onPressed: () async {
+                      if (synchronizationStore.synchronizing) return;
+
                       await initRefuelVariables();
 
                       if (vehicleStore.hasVehicleSelected) {
@@ -200,110 +202,129 @@ class _HomeTabState extends State<HomeTab> {
           thickness: 1,
           height: 1,
         ),
-        Flexible(
-          child: SingleChildScrollView(
-            child: Observer(
-              builder: (_) => ListView.builder(
-                  reverse: true,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: refuelStore.refuelList.length,
-                  itemBuilder: (context, index) {
-                    Refuel refuel = refuelStore.refuelList[index];
-                    DateTime refuelDate =
-                        DateFormat("dd/MM/yyyy hh:mm").parse(refuel.date);
-                    bool isHeader =
-                        refuelStore.cardHeaders.containsValue(refuelDate);
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(children: [
-                            Container(
-                              margin: EdgeInsets.only(left: 9, right: 20),
-                              width: 10,
-                              height: isHeader ? 115 : 99,
-                              color: kBlack,
-                              child: Center(
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: 15,
-                                  itemBuilder: (ctx, i) => Align(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
-                                      width: 2,
-                                      height: 6,
-                                      color: kYellowColor,
+        Observer(
+          builder: (_) {
+            if (synchronizationStore.synchronizing) {
+              return Expanded(
+                  child: Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(kDarkBlueColor),
+                  ),
+                  height: 60,
+                  width: 60,
+                ),
+              ));
+            } else {
+              return Flexible(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: refuelStore.refuelList.length,
+                      itemBuilder: (context, index) {
+                        Refuel refuel = refuelStore.refuelList[index];
+                        DateTime refuelDate =
+                            DateFormat("dd/MM/yyyy hh:mm").parse(refuel.date);
+                        bool isHeader =
+                            refuelStore.cardHeaders.containsValue(refuelDate);
+                        return Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          child: Row(
+                            children: [
+                              Stack(children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 9, right: 20),
+                                  width: 10,
+                                  height: isHeader ? 115 : 99,
+                                  color: kBlack,
+                                  child: Center(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: 15,
+                                      itemBuilder: (ctx, i) => Align(
+                                        child: Container(
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          width: 2,
+                                          height: 6,
+                                          color: kYellowColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Positioned(
-                              top: isHeader ? 55 : 35,
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: getColor(index),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(15),
+                                Positioned(
+                                  top: isHeader ? 55 : 35,
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: getColor(index),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(15),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.local_gas_station,
+                                      color: kWhiteColor,
+                                    ),
                                   ),
-                                ),
-                                child: Icon(
-                                  Icons.local_gas_station,
-                                  color: kWhiteColor,
-                                ),
-                              ),
-                            )
-                          ]),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                await initRefuelVariables(
-                                    odometer: refuel.odometer);
+                                )
+                              ]),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await initRefuelVariables(
+                                        odometer: refuel.odometer);
 
-                                refuelStore.setCurrentRefuel(refuel);
+                                    refuelStore.setCurrentRefuel(refuel);
 
-                                homeStore.navigateToPage(
-                                    context: context,
-                                    page: RefuelPage(
-                                      label: "Edit refuel",
-                                      edit: true,
-                                    ),
-                                    callback: () => refreshHomeTab());
-                              },
-                              child: Column(
-                                children: [
-                                  Visibility(
-                                    visible: isHeader,
-                                    child: Container(
-                                      margin:
-                                          EdgeInsets.only(top: 10, bottom: 5),
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                          DateFormat.yMMMM().format(refuelDate),
-                                          style: TextStyle(
-                                              color: kDarkGrey,
-                                              fontSize: CustomFontSize.large,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
+                                    homeStore.navigateToPage(
+                                        context: context,
+                                        page: RefuelPage(
+                                          label: "Edit refuel",
+                                          edit: true,
+                                        ),
+                                        callback: () => refreshHomeTab());
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Visibility(
+                                        visible: isHeader,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              top: 10, bottom: 5),
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              DateFormat.yMMMM()
+                                                  .format(refuelDate),
+                                              style: TextStyle(
+                                                  color: kDarkGrey,
+                                                  fontSize:
+                                                      CustomFontSize.large,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                      ),
+                                      RefuelCard(
+                                          refuel: refuelStore.refuelList[index])
+                                    ],
                                   ),
-                                  RefuelCard(
-                                      refuel: refuelStore.refuelList[index])
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
-            ),
-          ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              );
+            }
+          },
         )
       ]),
     );
