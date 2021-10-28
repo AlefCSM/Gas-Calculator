@@ -107,357 +107,361 @@ class _RefuelPageState extends State<RefuelPage> {
       appBar: AppBar(
         title: Text(widget.label),
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        child: Form(
-          key: _key,
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Row(
-                  children: [
-                    Flexible(
-                        child: Container(
-                      margin: EdgeInsets.only(right: 5),
-                      child: Row(children: [
-                        IconButton(
-                            icon: Icon(Icons.today),
-                            onPressed: () {
-                              datePicker(context);
-                            }),
-                        Flexible(
-                          child: CustomTextFormField(
-                            hint: "Date",
-                            controller: dateController,
-                            keyboardType: TextInputType.datetime,
-                            textInputAction: TextInputAction.next,
-                            inputFormatters: [maskDateFormatter],
-                            onSaved: (value) {
-                              if (value != null) refuelStore.date = value;
-                            },
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return "Fill this field";
-                              }
-
-                              if (value.toString().length != 10) {
-                                return "Invalid date";
-                              }
-
-                              try {
-                                var date =
-                                    DateFormat("dd/MM/yyyy").parseStrict(value);
-
-                                if (!date.isBefore(DateTime.now())) {
-                                  return "Future date not allowed";
-                                }
-                              } catch (e) {
-                                return "Invalid date";
-                              }
-                            },
-                          ),
-                        )
-                      ]),
-                    )),
-                    Flexible(
-                        child: Container(
-                            margin: EdgeInsets.only(left: 5),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.access_time_outlined),
-                                    onPressed: () {
-                                      timePicker(context);
-                                    }),
-                                Flexible(
-                                    child: CustomTextFormField(
-                                  hint: "Time",
-                                  keyboardType: TextInputType.datetime,
-                                  controller: timeController,
-                                  textInputAction: TextInputAction.next,
-                                  inputFormatters: [maskHourFormatter],
-                                  onSaved: (value) {
-                                    if (value != null) refuelStore.time = value;
-                                  },
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return "Fill this field";
-                                    }
-                                    var stringValue = value.toString();
-                                    var hours = stringValue.split(":").first;
-                                    var minutes = stringValue.split(":").last;
-
-                                    if (hours.length != 2 ||
-                                        int.parse(hours) > 23) {
-                                      return "Incorrect time";
-                                    }
-                                    if (!stringValue.contains(":") ||
-                                        minutes.length != 2 ||
-                                        int.parse(minutes) > 59) {
-                                      return "Incorrect time";
-                                    }
-                                  },
-                                ))
-                              ],
-                            )))
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CustomTextFormField(
-                      hint: "Odometer(km)",
-                      keyboardType: TextInputType.number,
-                      initialValue: "${refuelStore.currentRefuel.odometer}",
-                      inputFormatters: [
-                        CurrencyTextInputFormatter(decimalDigits: 2, symbol: "")
-                      ],
-                      textInputAction: TextInputAction.next,
-                      onSaved: (value) {
-                        if (value != null)
-                          refuelStore.currentRefuel.odometer =
-                              double.parse(value.replaceAll(",", ""));
-                      },
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Fill this field";
-                        }
-                        if (refuelStore.lastRefuel.id != null) {
-                          if (double.parse(value) <=
-                              refuelStore.lastRefuel.odometer) {
-                            return "Odometer should be bigger than last refuel";
-                          }
-                        }
-                      },
-                    ),
-                    Visibility(
-                        visible: refuelStore.lastRefuel.id != null,
-                        child: Text(
-                            "Last odometer: ${refuelStore.lastRefuel.odometer}"))
-                  ],
-                ),
-              ),
-              Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Observer(
-                    builder: (_) => CustomDropdown(
-                      value: refuelStore.currentFuelType.id > 0
-                          ? refuelStore.currentFuelType
-                          : refuelStore.fuelTypeList[0],
-                      dropdownMenuItemList: refuelStore.fuelTypeDrodownList,
-                      onChanged: (FuelType? value) {
-                        if (value != null) {
-                          refuelStore.setCurrentFuelType(value);
-                          refuelStore.currentRefuel.fuelTypeId = value.id;
-                          refuelStore
-                              .setCurrentRefuel(refuelStore.currentRefuel);
-                          vehicleStore.selectedVehicle.fuelTypeId = value.id;
-                          vehicleStore
-                              .setSelectedVehicle(vehicleStore.selectedVehicle);
-                        }
-                      },
-                      isEnabled: true,
-                    ),
-                  )),
-              Container(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+          child: Form(
+            key: _key,
+            child: Column(
+              children: [
+                Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: Row(
                     children: [
                       Flexible(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 5),
-                          child: Focus(
+                          child: Container(
+                        margin: EdgeInsets.only(right: 5),
+                        child: Row(children: [
+                          IconButton(
+                              icon: Icon(Icons.today),
+                              onPressed: () {
+                                datePicker(context);
+                              }),
+                          Flexible(
                             child: CustomTextFormField(
-                              hint: "Price/L",
-                              controller: refuelStore.priceInputController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              hint: "Date",
+                              controller: dateController,
+                              keyboardType: TextInputType.datetime,
                               textInputAction: TextInputAction.next,
-                              inputFormatters: [
-                                CurrencyTextInputFormatter(
-                                    decimalDigits: 3, symbol: "")
-                              ],
+                              inputFormatters: [maskDateFormatter],
                               onSaved: (value) {
-                                if (value != null)
-                                  refuelStore.currentRefuel.price =
-                                      double.parse(value.replaceAll(",", ""));
+                                if (value != null) refuelStore.date = value;
                               },
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return "Fill this field";
                                 }
-                              },
-                            ),
-                            onFocusChange: (hasFocus) {
-                              if (!hasFocus) {
-                                refuelStore.fillLastInput();
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
-                          child: Focus(
-                            child: CustomTextFormField(
-                              hint: "Total cost",
-                              controller: refuelStore.totalInputController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
-                              textInputAction: TextInputAction.next,
-                              inputFormatters: [
-                                CurrencyTextInputFormatter(
-                                    decimalDigits: 3, symbol: "")
-                              ],
-                              onSaved: (value) {
-                                if (value != null)
-                                  refuelStore.currentRefuel.totalCost =
-                                      double.parse(value.replaceAll(",", ""));
-                              },
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return "Fill this field";
-                                }
-                              },
-                            ),
-                            onFocusChange: (hasFocus) {
-                              if (!hasFocus) {
-                                refuelStore.fillLastInput();
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Focus(
-                            child: CustomTextFormField(
-                              hint: "Litres",
-                              controller: refuelStore.litresInputController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
-                              textInputAction: TextInputAction.done,
-                              inputFormatters: [
-                                CurrencyTextInputFormatter(
-                                    decimalDigits: 3, symbol: "")
-                              ],
-                              onSaved: (value) {
-                                if (value != null)
-                                  refuelStore.currentRefuel.litres =
-                                      double.parse(value.replaceAll(",", ""));
-                              },
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return "Fill this field";
-                                }
-                              },
-                            ),
-                            onFocusChange: (hasFocus) {
-                              if (!hasFocus) {
-                                refuelStore.fillLastInput();
-                              }
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  )),
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Observer(
-                          builder: (_) => Transform.scale(
-                            alignment: Alignment.centerLeft,
-                            scale: 0.8,
-                            child: CupertinoSwitch(
-                              activeColor: kDarkBlueColor,
-                              value: refuelStore.currentRefuel.isFillingUp,
-                              onChanged: (value) {
-                                refuelStore.currentRefuel.isFillingUp =
-                                    !refuelStore.currentRefuel.isFillingUp;
 
-                                refuelStore.setCurrentRefuel(
-                                    refuelStore.currentRefuel);
+                                if (value.toString().length != 10) {
+                                  return "Invalid date";
+                                }
+
+                                try {
+                                  var date = DateFormat("dd/MM/yyyy")
+                                      .parseStrict(value);
+
+                                  if (!date.isBefore(DateTime.now())) {
+                                    return "Future date not allowed";
+                                  }
+                                } catch (e) {
+                                  return "Invalid date";
+                                }
+                              },
+                            ),
+                          )
+                        ]),
+                      )),
+                      Flexible(
+                          child: Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      icon: Icon(Icons.access_time_outlined),
+                                      onPressed: () {
+                                        timePicker(context);
+                                      }),
+                                  Flexible(
+                                      child: CustomTextFormField(
+                                    hint: "Time",
+                                    keyboardType: TextInputType.datetime,
+                                    controller: timeController,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatters: [maskHourFormatter],
+                                    onSaved: (value) {
+                                      if (value != null)
+                                        refuelStore.time = value;
+                                    },
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return "Fill this field";
+                                      }
+                                      var stringValue = value.toString();
+                                      var hours = stringValue.split(":").first;
+                                      var minutes = stringValue.split(":").last;
+
+                                      if (hours.length != 2 ||
+                                          int.parse(hours) > 23) {
+                                        return "Incorrect time";
+                                      }
+                                      if (!stringValue.contains(":") ||
+                                          minutes.length != 2 ||
+                                          int.parse(minutes) > 59) {
+                                        return "Incorrect time";
+                                      }
+                                    },
+                                  ))
+                                ],
+                              )))
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      CustomTextFormField(
+                        hint: "Odometer(km)",
+                        keyboardType: TextInputType.number,
+                        initialValue: "${refuelStore.currentRefuel.odometer}",
+                        inputFormatters: [
+                          CurrencyTextInputFormatter(
+                              decimalDigits: 2, symbol: "")
+                        ],
+                        textInputAction: TextInputAction.next,
+                        onSaved: (value) {
+                          if (value != null)
+                            refuelStore.currentRefuel.odometer =
+                                double.parse(value.replaceAll(",", ""));
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "Fill this field";
+                          }
+                          if (refuelStore.lastRefuel.id != null) {
+                            if (double.parse(value) <=
+                                refuelStore.lastRefuel.odometer) {
+                              return "Odometer should be bigger than last refuel";
+                            }
+                          }
+                        },
+                      ),
+                      Visibility(
+                          visible: refuelStore.lastRefuel.id != null,
+                          child: Text(
+                              "Last odometer: ${refuelStore.lastRefuel.odometer}"))
+                    ],
+                  ),
+                ),
+                Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Observer(
+                      builder: (_) => CustomDropdown(
+                        value: refuelStore.currentFuelType.id > 0
+                            ? refuelStore.currentFuelType
+                            : refuelStore.fuelTypeList[0],
+                        dropdownMenuItemList: refuelStore.fuelTypeDrodownList,
+                        onChanged: (FuelType? value) {
+                          if (value != null) {
+                            refuelStore.setCurrentFuelType(value);
+                            refuelStore.currentRefuel.fuelTypeId = value.id;
+                            refuelStore
+                                .setCurrentRefuel(refuelStore.currentRefuel);
+                            vehicleStore.selectedVehicle.fuelTypeId = value.id;
+                            vehicleStore.setSelectedVehicle(
+                                vehicleStore.selectedVehicle);
+                          }
+                        },
+                        isEnabled: true,
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 5),
+                            child: Focus(
+                              child: CustomTextFormField(
+                                hint: "Price/L",
+                                controller: refuelStore.priceInputController,
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
+                                textInputAction: TextInputAction.next,
+                                inputFormatters: [
+                                  CurrencyTextInputFormatter(
+                                      decimalDigits: 3, symbol: "")
+                                ],
+                                onSaved: (value) {
+                                  if (value != null)
+                                    refuelStore.currentRefuel.price =
+                                        double.parse(value.replaceAll(",", ""));
+                                },
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return "Fill this field";
+                                  }
+                                },
+                              ),
+                              onFocusChange: (hasFocus) {
+                                if (!hasFocus) {
+                                  refuelStore.fillLastInput();
+                                }
                               },
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Text("Are you filling the tank?"),
+                        Flexible(
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5, right: 5),
+                            child: Focus(
+                              child: CustomTextFormField(
+                                hint: "Total cost",
+                                controller: refuelStore.totalInputController,
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
+                                textInputAction: TextInputAction.next,
+                                inputFormatters: [
+                                  CurrencyTextInputFormatter(
+                                      decimalDigits: 3, symbol: "")
+                                ],
+                                onSaved: (value) {
+                                  if (value != null)
+                                    refuelStore.currentRefuel.totalCost =
+                                        double.parse(value.replaceAll(",", ""));
+                                },
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return "Fill this field";
+                                  }
+                                },
+                              ),
+                              onFocusChange: (hasFocus) {
+                                if (!hasFocus) {
+                                  refuelStore.fillLastInput();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            child: Focus(
+                              child: CustomTextFormField(
+                                hint: "Litres",
+                                controller: refuelStore.litresInputController,
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
+                                textInputAction: TextInputAction.done,
+                                inputFormatters: [
+                                  CurrencyTextInputFormatter(
+                                      decimalDigits: 3, symbol: "")
+                                ],
+                                onSaved: (value) {
+                                  if (value != null)
+                                    refuelStore.currentRefuel.litres =
+                                        double.parse(value.replaceAll(",", ""));
+                                },
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return "Fill this field";
+                                  }
+                                },
+                              ),
+                              onFocusChange: (hasFocus) {
+                                if (!hasFocus) {
+                                  refuelStore.fillLastInput();
+                                }
+                              },
+                            ),
+                          ),
                         )
                       ],
-                    ),
-                    Text(
-                      "Consumption is calculated between two full tanks",
-                      style: TextStyle(
-                          color: kLightGrey, fontSize: CustomFontSize.small),
-                    )
-                  ],
+                    )),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Observer(
+                            builder: (_) => Transform.scale(
+                              alignment: Alignment.centerLeft,
+                              scale: 0.8,
+                              child: CupertinoSwitch(
+                                activeColor: kDarkBlueColor,
+                                value: refuelStore.currentRefuel.isFillingUp,
+                                onChanged: (value) {
+                                  refuelStore.currentRefuel.isFillingUp =
+                                      !refuelStore.currentRefuel.isFillingUp;
+
+                                  refuelStore.setCurrentRefuel(
+                                      refuelStore.currentRefuel);
+                                },
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 5),
+                            child: Text("Are you filling the tank?"),
+                          )
+                        ],
+                      ),
+                      Text(
+                        "Consumption is calculated between two full tanks",
+                        style: TextStyle(
+                            color: kLightGrey, fontSize: CustomFontSize.small),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: SubmitButton(
-                  text: "Save",
-                  onPressed: () async {
-                    if (_key.currentState!.validate()) {
-                      _key.currentState!.save();
-                      refuelStore.currentRefuel.date =
-                          '${refuelStore.date} ${refuelStore.time}';
-                      refuelStore.currentRefuel.vehicleId =
-                          vehicleStore.selectedVehicle.id!;
-                      var refuel = await refuelStore.saveRefuel();
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: SubmitButton(
+                    text: "Save",
+                    onPressed: () async {
+                      if (_key.currentState!.validate()) {
+                        _key.currentState!.save();
+                        refuelStore.currentRefuel.date =
+                            '${refuelStore.date} ${refuelStore.time}';
+                        refuelStore.currentRefuel.vehicleId =
+                            vehicleStore.selectedVehicle.id!;
+                        var refuel = await refuelStore.saveRefuel();
 
-                      if (refuel.id == null) {
-                        //exibe mensagem de erro
-                      } else {
-                        // refuelStore.setCurrent
+                        if (refuel.id == null) {
+                          //exibe mensagem de erro
+                        } else {
+                          // refuelStore.setCurrent
 
-                        refuelStore.getRefuels(
-                            vehicleId: vehicleStore.selectedVehicle.id!);
-                        Navigator.of(context).pop();
+                          refuelStore.getRefuels(
+                              vehicleId: vehicleStore.selectedVehicle.id!);
+                          Navigator.of(context).pop();
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-              Visibility(
-                visible: widget.edit,
-                child: SubmitButton(
-                  text: "Delete",
-                  onPressed: () async {
-                    bool? result = await homeStore.showConfirmationDialog(
-                            context: context,
-                            title: "Do you really want to delete?",
-                            description: "",
-                            confirmButton: "Yes",
-                            cancelButton: "No") ??
-                        false;
+                Visibility(
+                  visible: widget.edit,
+                  child: SubmitButton(
+                    text: "Delete",
+                    onPressed: () async {
+                      bool? result = await homeStore.showConfirmationDialog(
+                              context: context,
+                              title: "Do you really want to delete?",
+                              description: "",
+                              confirmButton: "Yes",
+                              cancelButton: "No") ??
+                          false;
 
-                    if (result) {
-                      var success = await refuelStore
-                          .deleteRefuel(refuelStore.currentRefuel.id!);
-                      if (success) {
-                        refuelStore.getRefuels(
-                            vehicleId: vehicleStore.selectedVehicle.id!);
-                        Navigator.of(context).pop();
+                      if (result) {
+                        var success = await refuelStore
+                            .deleteRefuel(refuelStore.currentRefuel.id!);
+                        if (success) {
+                          refuelStore.getRefuels(
+                              vehicleId: vehicleStore.selectedVehicle.id!);
+                          Navigator.of(context).pop();
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

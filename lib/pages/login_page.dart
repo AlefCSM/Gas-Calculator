@@ -32,24 +32,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: kAccentColor,
+      color: kDarkBlueColor,
       child: SafeArea(
         child: Scaffold(
-          body: Container(
-            color: kDarkBlueColor,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: Observer(
-                builder: (_) {
-                  switch (loginStore.currentForm) {
-                    case LoginForms.REGISTER:
-                      return registerCard();
-                    case LoginForms.LOST_PASSWORD:
-                      return forgotPasswordCard();
-                    default:
-                      return loginCard();
-                  }
-                },
+          resizeToAvoidBottomInset: true,
+          backgroundColor: kDarkBlueColor,
+          body: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 80),
+              child: Center(
+                child: Observer(
+                  builder: (_) {
+                    switch (loginStore.currentForm) {
+                      case LoginForms.REGISTER:
+                        return registerCard();
+                      case LoginForms.LOST_PASSWORD:
+                        return forgotPasswordCard();
+                      default:
+                        return loginCard();
+                    }
+                  },
+                  // ),
+                ),
               ),
             ),
           ),
@@ -151,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                   if (connectivityStore.isConnected) {
                     loginStore.signInWithGoogle(context);
                   } else {
-                     homeStore.showDisconnectionDialog(context: context);
+                    homeStore.showDisconnectionDialog(context: context);
                   }
                 },
               ),
